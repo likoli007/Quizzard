@@ -1,0 +1,23 @@
+[
+	{
+		"id": "1",
+		"name": "Santa Claus",
+		"username": "santa",
+		"password": "santa123",
+		"role": "santa"
+	},
+	{
+		"id": "2",
+		"name": "Rudolph",
+		"username": "rudy",
+		"password": "rudy123",
+		"role": "user"
+	},
+	{
+		"id": "3",
+		"name": "Frosty",
+		"username": "frosty",
+		"password": "frosty123",
+		"role": "user"
+	}
+]

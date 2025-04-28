@@ -1,0 +1,34 @@
+[
+	{
+		"id": "1",
+		"name": "The fastest car",
+		"description": "Mercedes AMG",
+		"price": 1,
+		"createdBy": "2",
+		"delivered": true
+	},
+	{
+		"id": "2",
+		"name": "Macbook Air",
+		"description": "M3 256 GB SSD 8GB RAM",
+		"price": 10,
+		"createdBy": "2",
+		"delivered": true
+	},
+	{
+		"id": "3",
+		"name": "iPhone 19 Pro",
+		"description": "Idc it does not exist",
+		"price": 5,
+		"createdBy": "3",
+		"delivered": true
+	},
+	{
+		"id": "4",
+		"name": "Another gift",
+		"description": "description description",
+		"price": 12,
+		"createdBy": "2",
+		"delivered": true
+	}
+]
