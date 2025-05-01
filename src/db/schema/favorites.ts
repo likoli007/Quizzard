@@ -1,0 +1,18 @@
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { sql } from 'drizzle-orm';
+
+import { topics } from './topics';
+import { users } from './users';
+
+export const favorites = sqliteTable('favorites', {
+	id: text('id').primaryKey(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => users.id),
+	topicId: text('topic_id')
+		.notNull()
+		.references(() => topics.id),
+	createdAt: text('created_at')
+		.notNull()
+		.default(sql`CURRENT_TIMESTAMP`)
+});
