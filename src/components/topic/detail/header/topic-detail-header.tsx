@@ -53,7 +53,7 @@ export default function TopicDetailHeader({
 					<TopicDetailHeaderDate
 						text="Published"
 						date={publishedAt}
-						icon={<Calendar className="h-4 w-4" />}
+						Icon={Calendar}
 					/>
 					{updatedAt != publishedAt && (
 						<TopicDetailHeaderDate text="Updated" date={updatedAt} />

@@ -56,7 +56,10 @@ export function CreateTopicForm({ userId }: { userId: string }) {
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				className="mx-auto flex max-w-4xl flex-col gap-8"
+			>
 				<FormField
 					control={form.control}
 					name="title"
