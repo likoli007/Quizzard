@@ -12,9 +12,7 @@ export const topics = sqliteTable('topics', {
 	description: text('description'),
 	content: text('content').notNull(),
 	category: text('category').notNull(),
-	userId: text('user_id')
-		.notNull()
-		.references(() => users.id),
+	userId: text('user_id'), //.notNull().references(() => users.id), TODO: uncomment once users table is functional
 	publishedAt: text('published_at')
 		.notNull()
 		.default(sql`CURRENT_TIMESTAMP`),
@@ -27,7 +25,7 @@ export const topics = sqliteTable('topics', {
 });
 
 export const topicsRelations = relations(topics, ({ one, many }) => ({
-	author: one(users, { fields: [topics.userId], references: [users.id] }),
+	//author: one(users, { fields: [topics.userId], references: [users.id] }), //TODO: uncomment once users table is functional
 	favorites: many(favorites),
 	quizzes: many(quizzes)
 }));

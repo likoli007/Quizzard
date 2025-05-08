@@ -15,6 +15,20 @@
       "when": 1746689027062,
       "tag": "0001_pretty_dracula",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1746697861050,
+      "tag": "0002_thick_naoko",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1746697922212,
+      "tag": "0003_quiet_lila_cheney",
+      "breakpoints": true
     }
   ]
 }
