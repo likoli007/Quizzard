@@ -1,0 +1,1 @@
+ALTER TABLE `topics` ADD `read_time` text NOT NULL;

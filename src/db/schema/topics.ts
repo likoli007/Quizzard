@@ -10,6 +10,7 @@ export const topics = sqliteTable('topics', {
 	id: text('id').primaryKey(),
 	title: text('title').notNull(),
 	description: text('description'),
+	readTime: text('read_time').notNull(),
 	content: text('content').notNull(),
 	category: text('category').notNull(),
 	userId: text('user_id'), //.notNull().references(() => users.id), TODO: uncomment once users table is functional
