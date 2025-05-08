@@ -9,6 +9,7 @@ const Home = () => (
 				<PageLink href="/profile">Profile</PageLink>
 				<PageLink href="/list">List</PageLink>
 				<PageLink href="/create">Create</PageLink>
+				<PageLink href="/topics">Topics</PageLink>
 			</div>
 		</div>
 	</>
