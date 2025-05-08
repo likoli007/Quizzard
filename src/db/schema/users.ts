@@ -24,10 +24,10 @@ export const users = sqliteTable('users', {
 
 export const usersRelations = relations(users, ({ one, many }) => ({
 	prefs: one(userPrefs, { fields: [users.id], references: [userPrefs.userId] }),
-	topics: many(topics),
-	quizzes: many(quizzes),
-	favorites: many(favorites),
-	attempts: many(quizAttempts)
+	//topics: many(topics), 	TODO: uncomment once users table is functional
+	//quizzes: many(quizzes),	TODO: uncomment once users table is functional
+	favorites: many(favorites)
+	//attempts: many(quizAttempts)
 }));
 
 export type User = typeof users.$inferSelect;

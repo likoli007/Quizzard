@@ -16,9 +16,7 @@ export const quizzes = sqliteTable('quizzes', {
 	topicId: text('topic_id')
 		.notNull()
 		.references(() => topics.id),
-	userId: text('user_id')
-		.notNull()
-		.references(() => users.id),
+	userId: text('user_id'), //.notNull().references(() => users.id), // TODO: uncomment once users table is functional
 	createdAt: text('created_at')
 		.notNull()
 		.default(sql`CURRENT_TIMESTAMP`),
@@ -29,7 +27,7 @@ export const quizzes = sqliteTable('quizzes', {
 
 export const quizzesRelations = relations(quizzes, ({ one, many }) => ({
 	topic: one(topics, { fields: [quizzes.topicId], references: [topics.id] }),
-	author: one(users, { fields: [quizzes.userId], references: [users.id] }),
+	//author: one(users, { fields: [quizzes.userId], references: [users.id] }),
 	attempts: many(quizAttempts),
 	key: one(quizKeyEntries, {
 		fields: [quizzes.id],
