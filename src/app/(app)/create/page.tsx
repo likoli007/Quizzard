@@ -1,6 +1,4 @@
-import { getLoggedInUser } from '@/app/server-actions/logged-user';
-import { CreateGiftForm } from '@/modules/gift/components/create-gift-form';
-import { CreateTopicQuizForm } from '@/modules/gift/components/create-quiz-form/create-quiz-form';
+import { CreateTopicQuizForm } from '@/modules/quiz/components/create-quiz-form/create-quiz-form';
 
 const CreatePage = async () => (
 	<>

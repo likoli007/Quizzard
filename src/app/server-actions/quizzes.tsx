@@ -11,7 +11,7 @@ import {
 import { quizKeyEntries } from '@/db/schema/quizKeys';
 import { quizzes } from '@/db/schema/quizzes';
 import { topics } from '@/db/schema/topics';
-import { createTopicQuizSchema } from '@/modules/gift/components/create-quiz-form/schema';
+import { createTopicQuizSchema } from '@/modules/quiz/components/create-quiz-form/schema';
 
 export const createTopicWithQuiz = async (
 	rawData: unknown,
@@ -27,6 +27,7 @@ export const createTopicWithQuiz = async (
 			title: data.title,
 			description: data.description ?? null,
 			content: data.content,
+			readTime: data.readTime,
 			category: data.category,
 			userId,
 			...(data.publishedAt && { publishedAt: data.publishedAt })
