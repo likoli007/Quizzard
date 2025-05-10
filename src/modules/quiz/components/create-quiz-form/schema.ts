@@ -28,6 +28,7 @@ export const createTopicValidator = z.object({
 	title: z.string().min(1),
 	description: z.string().optional(),
 	content: z.string(),
+	readTime: z.string(),
 	category: z.string(),
 	userId: z.string(),
 	publishedAt: z.string().optional()

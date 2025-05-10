@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button';
 import {
 	createTopicQuizSchema,
 	type CreateTopicQuizInput
-} from '@/modules/gift/components/create-quiz-form/schema';
+} from '@/modules/quiz/components/create-quiz-form/schema';
 import { createTopicWithQuiz } from '@/app/server-actions/quizzes';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -37,7 +37,7 @@ export const CreateTopicQuizForm = ({ userId }: { userId: string }) => {
 			userId,
 			timeLimit: 600,
 			questions: [],
-
+			readTime: '0',
 			title: '',
 			description: '',
 			content: '',
@@ -48,7 +48,7 @@ export const CreateTopicQuizForm = ({ userId }: { userId: string }) => {
 		}
 	});
 
-	const { control, handleSubmit } = form;
+	const { control, handleSubmit, formState } = form;
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'questions'
@@ -64,6 +64,7 @@ export const CreateTopicQuizForm = ({ userId }: { userId: string }) => {
 		});
 
 	const onSubmit = async (data: CreateTopicQuizInput) => {
+		console.log('data', data);
 		setIsPending(true);
 		try {
 			await createTopicWithQuiz(data, userId);
@@ -75,6 +76,8 @@ export const CreateTopicQuizForm = ({ userId }: { userId: string }) => {
 			setIsPending(false);
 		}
 	};
+
+	console.log('formState', formState.errors);
 
 	return (
 		<Form {...form}>
@@ -105,6 +108,20 @@ export const CreateTopicQuizForm = ({ userId }: { userId: string }) => {
 						render={({ field }) => (
 							<FormItem>
 								<FormLabel>Description</FormLabel>
+								<FormControl>
+									<Input {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={control}
+						name="readTime"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Read Time</FormLabel>
 								<FormControl>
 									<Input {...field} />
 								</FormControl>
@@ -241,7 +258,9 @@ export const CreateTopicQuizForm = ({ userId }: { userId: string }) => {
 					})}
 				</section>
 
-				<Button disabled={isPending}>{isPending ? 'Saving…' : 'Create'}</Button>
+				<Button type="submit" disabled={isPending}>
+					{isPending ? 'Saving…' : 'Create'}
+				</Button>
 			</form>
 		</Form>
 	);
