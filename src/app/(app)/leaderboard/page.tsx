@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Medal } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { PageHeading } from '@/components/common/page-heading';
+import { LeaderboardCard } from '@/components/leaderboard/LeaderboardCard';
 
 const mockLeaders = Array.from({ length: 50 }, (_, i) => ({
 	id: i + 1,
@@ -16,14 +16,14 @@ const mockLeaders = Array.from({ length: 50 }, (_, i) => ({
 const currentUserId = 17;
 
 const LeaderboardPage = () => {
-	const sortedLeaders = mockLeaders.sort((a, b) => b.score - a.score);
+	const sortedLeaders = mockLeaders.toSorted((a, b) => b.score - a.score);
 	const currentUser = sortedLeaders.find(u => u.id === currentUserId);
 	const currentUserPlace =
 		sortedLeaders.findIndex(u => u.id === currentUserId) + 1;
 
 	const currentUserRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [footerPosition, setFooterPosition] = useState<
+	const [stickyCardPosition, setStickyCardPosition] = useState<
 		'top' | 'bottom' | 'hidden'
 	>('bottom');
 
@@ -45,14 +45,11 @@ const LeaderboardPage = () => {
 			cardRect.top >= containerRect.top &&
 			cardRect.bottom <= containerRect.bottom
 		) {
-			// card fully visible in container viewport
-			setFooterPosition('hidden');
+			setStickyCardPosition('hidden');
 		} else if (cardRect.bottom > containerRect.bottom) {
-			// card completely below
-			setFooterPosition('bottom');
+			setStickyCardPosition('bottom');
 		} else if (cardRect.top < containerRect.top) {
-			// card completely above
-			setFooterPosition('top');
+			setStickyCardPosition('top');
 		}
 	};
 
@@ -75,7 +72,6 @@ const LeaderboardPage = () => {
 			<PageHeading heading="Leaderboard" subheading="Who’s on top this week?" />
 
 			<div className="relative max-h-[600px] overflow-hidden rounded-xl border">
-				{/* Scrollable leaderboard */}
 				<div
 					ref={containerRef}
 					className="hide-scrollbar max-h-[600px] space-y-2 overflow-y-auto p-2 pb-20"
@@ -83,54 +79,34 @@ const LeaderboardPage = () => {
 					{sortedLeaders.map((leader, index) => {
 						const isCurrent = leader.id === currentUserId;
 						return (
-							<div
+							<LeaderboardCard
 								key={leader.id}
-								ref={isCurrent ? currentUserRef : null}
-								className={cn(
-									'flex items-center justify-between rounded-xl border p-4 shadow-sm',
-									isCurrent && 'border-primary bg-muted'
-								)}
-							>
-								{/* Left: place + medal */}
-								<div className="flex w-24 items-center gap-2">
-									<span className="w-5 text-right font-medium">
-										{index + 1}
-									</span>
-									{getMedal(index + 1)}
-								</div>
-
-								{/* Center: username */}
-								<div className="flex-1 text-center font-medium">
-									{leader.name}
-								</div>
-
-								{/* Right: score */}
-								<Badge>{leader.score} pts</Badge>
-							</div>
+								ref={isCurrent ? currentUserRef : undefined}
+								place={index + 1}
+								name={leader.name}
+								score={leader.score}
+								getMedal={getMedal}
+								isCurrent={isCurrent}
+							/>
 						);
 					})}
 				</div>
 
-				{/* Sticky footer */}
-				{currentUser && footerPosition !== 'hidden' && (
+				{currentUser && stickyCardPosition !== 'hidden' && (
 					<div
 						className={cn(
 							'pointer-events-none absolute right-0 left-0 p-2',
-							footerPosition === 'top' ? 'top-0' : 'bottom-0'
+							stickyCardPosition === 'top' ? 'top-0' : 'bottom-0'
 						)}
 					>
-						<div className="border-primary bg-muted flex items-center justify-between rounded-xl border p-3 shadow-lg">
-							<div className="flex w-24 items-center gap-2">
-								<span className="w-5 text-right font-medium">
-									{currentUserPlace}
-								</span>
-								{getMedal(currentUserPlace)}
-							</div>
-							<div className="flex-1 text-center font-medium">
-								{currentUser.name}
-							</div>
-							<Badge>{currentUser.score} pts</Badge>
-						</div>
+						<LeaderboardCard
+							place={currentUserPlace}
+							name={currentUser.name}
+							score={currentUser.score}
+							getMedal={getMedal}
+							isCurrent
+							className="border-primary bg-muted p-3 shadow-lg"
+						/>
 					</div>
 				)}
 			</div>
