@@ -2,6 +2,7 @@
 
 //import { v4 as uuidv4 } from 'uuid';
 import { v4 as uuid } from 'uuid';
+import { eq } from 'drizzle-orm';
 
 import { db } from '@/db';
 import {
@@ -68,4 +69,12 @@ export const createTopicWithQuiz = async (
 
 		return { quizId };
 	});
+};
+
+export const deleteQuiz = async (quizId: string): Promise<void> => {
+	await db.transaction(async tx => {
+		await tx.update(quizzes).set({ deleted: 1 }).where(eq(quizzes.id, quizId));
+	});
+
+	//revalidatePath(); TODO: later?
 };
