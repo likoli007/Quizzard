@@ -3,14 +3,16 @@ import { notFound } from 'next/navigation';
 import { getTopic } from '@/modules/topic/server/query';
 import TopicDetail from '@/modules/topic/detail/topic-detail';
 
-export default async function TopicDetailPage({
+const TopicDetailPage = async ({
 	params
 }: {
-	params: { id: string };
-}) {
-	const topic = await getTopic(await params.id);
+	params: Promise<{ id: string }>;
+}) => {
+	const topic = await getTopic((await params).id);
 
 	if (!topic) return notFound();
 
 	return <TopicDetail topic={topic} />;
-}
+};
+
+export default TopicDetailPage;

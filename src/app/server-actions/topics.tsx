@@ -2,11 +2,11 @@
 
 import { v4 as uuid } from 'uuid';
 import { revalidatePath } from 'next/cache';
-import { db } from '@/db';
-import { topics } from '@/db/schema/topics';
-import { createTopicValidator } from '@/db/schema/topics';
 
-export async function createTopic(raw: unknown) {
+import { db } from '@/db';
+import { createTopicValidator, topics } from '@/db/schema/topics';
+
+const createTopic = async (raw: unknown) => {
 	const data = createTopicValidator.parse(raw);
 
 	await db.insert(topics).values({
@@ -21,4 +21,5 @@ export async function createTopic(raw: unknown) {
 	});
 
 	revalidatePath('/topics');
-}
+};
+export default createTopic;

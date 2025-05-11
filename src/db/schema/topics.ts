@@ -2,7 +2,6 @@ import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
-import { users } from './users';
 import { favorites } from './favorites';
 import { quizzes } from './quizzes';
 

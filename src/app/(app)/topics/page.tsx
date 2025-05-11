@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { getTopics } from '@/modules/topic/server/query';
 import { TopicCard } from '@/modules/topic/card/topic-card';
 
-export default async function TopicsPage() {
+const TopicsPage = async () => {
 	const allTopics = await getTopics();
 
 	return (
@@ -28,4 +28,6 @@ export default async function TopicsPage() {
 			</div>
 		</div>
 	);
-}
+};
+
+export default TopicsPage;

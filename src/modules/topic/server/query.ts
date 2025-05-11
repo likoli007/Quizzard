@@ -1,10 +1,11 @@
 import 'server-only';
-import { db } from '@/db';
-import { topics } from '@/db/schema/topics';
 import { desc, eq } from 'drizzle-orm';
 
-export async function getTopics() {
-	return db
+import { db } from '@/db';
+import { topics } from '@/db/schema/topics';
+
+export const getTopics = async () =>
+	db
 		.select({
 			id: topics.id,
 			title: topics.title,
@@ -16,9 +17,8 @@ export async function getTopics() {
 		})
 		.from(topics)
 		.orderBy(desc(topics.publishedAt));
-}
 
-export async function getTopic(id: string) {
+export const getTopic = async (id: string) => {
 	const [topic] = await db
 		.select({
 			id: topics.id,
@@ -36,4 +36,4 @@ export async function getTopic(id: string) {
 		.where(eq(topics.id, id));
 
 	return topic;
-}
+};

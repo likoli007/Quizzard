@@ -1,7 +1,7 @@
 import { TopicCard } from '@/modules/topic/card/topic-card';
 import { getTopics } from '@/modules/topic/server/query';
 
-export default async function FavoritesPage() {
+const FavoritesPage = async () => {
 	const allTopics = await getTopics();
 
 	return (
@@ -20,4 +20,6 @@ export default async function FavoritesPage() {
 			</div>
 		</div>
 	);
-}
+};
+
+export default FavoritesPage;

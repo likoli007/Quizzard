@@ -10,7 +10,6 @@ import {
 	createTopicValidator,
 	type CreateTopicInput
 } from '@/db/schema/topics';
-
 import {
 	Form,
 	FormField,
@@ -22,9 +21,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { createTopic } from '@/app/server-actions/topics';
+import createTopic from '@/app/server-actions/topics';
 
-export function CreateTopicForm({ userId }: { userId: string }) {
+export const CreateTopicForm = ({ userId }: { userId: string }) => {
 	const router = useRouter();
 	const [isPending, setIsPending] = useState(false);
 
@@ -136,4 +135,4 @@ export function CreateTopicForm({ userId }: { userId: string }) {
 			</form>
 		</Form>
 	);
-}
+};

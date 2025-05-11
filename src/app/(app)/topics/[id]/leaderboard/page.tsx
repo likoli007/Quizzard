@@ -5,14 +5,14 @@ import Link from 'next/link';
 import { PageHeading } from '@/components/common/page-heading';
 import { mockLeaders } from '@/lib/mockData';
 import StickyLeaderboard from '@/components/leaderboard/StickyLeaderboard';
-import { getTopic } from '@/app/server-actions/topics';
+import { getTopic } from '@/modules/topic/server/query';
 
 type LeaderboardPageProps = {
-	params: { id: string };
+	params: Promise<{ id: string }>;
 };
 
 const LeaderboardPage = async ({ params }: LeaderboardPageProps) => {
-	const topic = await getTopic(params.id);
+	const topic = await getTopic((await params).id);
 
 	return (
 		<div className="container mx-auto space-y-6 px-4 py-12">

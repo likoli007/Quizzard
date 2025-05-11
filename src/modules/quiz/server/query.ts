@@ -1,18 +1,20 @@
 import 'server-only';
-import { db } from '@/db';
 import { and, desc, eq } from 'drizzle-orm';
+
+import { db } from '@/db';
 import { quizzes } from '@/db/schema/quizzes';
-import { quizAttempts, QuizAttempt } from '@/db/schema/quizAttempts';
+import { quizAttempts } from '@/db/schema/quizAttempts';
 import {
 	multipleChoiceQuestions,
 	trueFalseQuestions
 } from '@/db/schema/questions';
-import { QuizWithDetails } from './types';
 
-export async function getQuizWithDetails(
+import { type QuizWithDetails } from './types';
+
+export const getQuizWithDetails = async (
 	quizId: string,
 	userId: string
-): Promise<QuizWithDetails | undefined> {
+): Promise<QuizWithDetails | undefined> => {
 	const quizRow = await db
 		.select({
 			id: quizzes.id,
@@ -78,12 +80,12 @@ export async function getQuizWithDetails(
 		trueFalseQuestions: tfQuestions,
 		multipleChoiceQuestions: mcQuestions
 	};
-}
+};
 
-export async function getUserQuizzesWithDetails(
+export const getUserQuizzesWithDetails = async (
 	userId: string,
 	limit?: number
-): Promise<QuizWithDetails[]> {
+): Promise<QuizWithDetails[]> => {
 	const userQuizzes = await db
 		.select({
 			id: quizzes.id,
@@ -100,10 +102,8 @@ export async function getUserQuizzesWithDetails(
 		.where(eq(quizzes.userId, userId));
 
 	const detailed = await Promise.all(
-		userQuizzes.map(async q => {
-			return getQuizWithDetails(q.id, userId);
-		})
+		userQuizzes.map(async q => getQuizWithDetails(q.id, userId))
 	);
 
 	return detailed.filter((d): d is QuizWithDetails => !!d);
-}
+};

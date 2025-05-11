@@ -19,7 +19,7 @@ type TopicDetailHeaderProps = {
 	userId: string | null;
 };
 
-export default function TopicDetailHeader({
+export default ({
 	id,
 	title,
 	category,
@@ -27,7 +27,7 @@ export default function TopicDetailHeader({
 	publishedAt,
 	updatedAt,
 	userId
-}: TopicDetailHeaderProps) {
+}: TopicDetailHeaderProps) => {
 	const [isFavorite, setIsFavorite] = useState(false);
 	const toggleFavorite = () => setIsFavorite(f => !f);
 
@@ -67,7 +67,7 @@ export default function TopicDetailHeader({
 						date={publishedAt}
 						Icon={Calendar}
 					/>
-					{updatedAt != publishedAt && (
+					{updatedAt !== publishedAt && (
 						<TopicDetailHeaderDate text="Updated" date={updatedAt} />
 					)}
 				</div>
@@ -77,4 +77,4 @@ export default function TopicDetailHeader({
 			</div>
 		</div>
 	);
-}
+};
