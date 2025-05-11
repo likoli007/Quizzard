@@ -7,6 +7,13 @@ import { useForm, useFieldArray, useFormContext } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue
+} from '@/components/ui/select';
+import {
 	Form,
 	FormField,
 	FormItem,
@@ -17,34 +24,35 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
-	createTopicQuizSchema,
+	createQuizSchema,
 	type CreateTopicQuizInput
 } from '@/modules/quiz/components/create-quiz-form/schema';
 import { createTopicWithQuiz } from '@/app/server-actions/quizzes';
 import { Textarea } from '@/components/ui/textarea';
+import { type Topic } from '@/db/schema/topics';
 
 import { TrueFalseOption } from './true-false-option';
 import { MultipleChoiceOption } from './multiple-choice-option';
 
 //TODO: beautify :D
-export const CreateTopicQuizForm = ({ userId }: { userId: string }) => {
+export const CreateTopicQuizForm = ({
+	userId,
+	topics
+}: {
+	userId: string;
+	topics: Topic[];
+}) => {
 	const router = useRouter();
 	const [isPending, setIsPending] = useState(false);
 
 	const form = useForm<CreateTopicQuizInput>({
-		resolver: zodResolver(createTopicQuizSchema),
+		resolver: zodResolver(createQuizSchema),
 		defaultValues: {
-			userId,
 			timeLimit: 600,
 			questions: [],
-			readTime: '0',
-			title: '',
-			description: '',
-			content: '',
-			category: '',
-			publishedAt: '',
 			quizTitle: '',
-			quizDescription: ''
+			quizDescription: '',
+			associatedTopicId: ''
 		}
 	});
 
@@ -86,73 +94,32 @@ export const CreateTopicQuizForm = ({ userId }: { userId: string }) => {
 				className="mx-auto flex max-w-4xl flex-col gap-8"
 			>
 				<section className="space-y-3">
-					<h2 className="text-xl font-semibold">Article</h2>
-
 					<FormField
 						control={control}
-						name="title"
+						name="associatedTopicId"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Title</FormLabel>
-								<FormControl>
-									<Input {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+								<FormLabel>Associated topic</FormLabel>
 
-					<FormField
-						control={control}
-						name="description"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Description</FormLabel>
-								<FormControl>
-									<Input {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+								<Select
+									onValueChange={field.onChange}
+									defaultValue={field.value}
+									disabled={topics.length === 0}
+								>
+									<FormControl>
+										<SelectTrigger className="w-full max-w-sm">
+											<SelectValue placeholder="Choose a topic…" />
+										</SelectTrigger>
+									</FormControl>
 
-					<FormField
-						control={control}
-						name="readTime"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Read Time</FormLabel>
-								<FormControl>
-									<Input {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-
-					<FormField
-						control={control}
-						name="content"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Content</FormLabel>
-								<FormControl>
-									<Textarea rows={8} {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-
-					<FormField
-						control={control}
-						name="category"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Category</FormLabel>
-								<FormControl>
-									<Input {...field} />
-								</FormControl>
+									<SelectContent>
+										{topics.map(t => (
+											<SelectItem key={t.id} value={t.id}>
+												{t.title}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
 								<FormMessage />
 							</FormItem>
 						)}
