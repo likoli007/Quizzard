@@ -37,3 +37,13 @@ export const getTopic = async (id: string) => {
 
 	return topic;
 };
+
+export const getTopicsByUserId = async (userId: string) => {
+	const topicsByUser = await db
+		.select()
+		.from(topics)
+		.where(eq(topics.userId, userId))
+		.orderBy(desc(topics.publishedAt));
+
+	return topicsByUser;
+};
