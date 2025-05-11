@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { type NextAuthConfig } from 'next-auth';
 import GitHub from 'next-auth/providers/github';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 
@@ -10,7 +10,7 @@ import {
 	verificationTokens
 } from '@/db/schema/users';
 
-export const { handlers, auth } = NextAuth({
+export const authOptions = {
 	adapter: DrizzleAdapter(db, {
 		usersTable: users,
 		accountsTable: accounts,
@@ -23,5 +23,14 @@ export const { handlers, auth } = NextAuth({
 			clientSecret: process.env.GITHUB_SECRET
 		})
 	],
-	secret: process.env.NEXT_PUBLIC_SECRET
-});
+	secret: process.env.NEXT_PUBLIC_SECRET,
+	callbacks: {
+		session({ session, user }) {
+			session.user.id = user.id;
+
+			return session;
+		}
+	}
+} satisfies NextAuthConfig;
+
+export const { handlers, auth } = NextAuth(authOptions);
