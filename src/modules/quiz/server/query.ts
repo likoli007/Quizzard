@@ -1,5 +1,5 @@
 import 'server-only';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 
 import { db } from '@/db';
 import { quizzes } from '@/db/schema/quizzes';
@@ -26,10 +26,31 @@ export async function getTopicQuizzes(topicId: string) {
 		.orderBy(desc(quizzes.createdAt));
 }
 
+export async function getAllQuizzes() {
+  return db
+    .select({
+      id: quizzes.id,
+      title: quizzes.title,
+      description: quizzes.description,
+      timeLimit: quizzes.timeLimit,
+      topicId: quizzes.topicId,
+      trueFalseCount: sql<number>`(
+        SELECT COUNT(*) FROM ${trueFalseQuestions}
+        WHERE ${trueFalseQuestions.quizId} = ${quizzes.id}
+      )`,
+      multipleChoiceCount: sql<number>`(
+        SELECT COUNT(*) FROM ${multipleChoiceQuestions}
+        WHERE ${multipleChoiceQuestions.quizId} = ${quizzes.id}
+      )`
+    })
+    .from(quizzes)
+    .where(sql`${quizzes.deleted} = 0`)
+    .orderBy(desc(quizzes.createdAt));
+}
+
 export const getQuizWithDetails = async (
-	quizId: string,
-	userId: string
-): Promise<QuizWithDetails | undefined> => {
+	quizId: string
+	): Promise<QuizWithDetails | undefined> => {
 	const quizRow = await db
 		.select({
 			id: quizzes.id,
@@ -42,7 +63,7 @@ export const getQuizWithDetails = async (
 			updatedAt: quizzes.updatedAt
 		})
 		.from(quizzes)
-		.where(and(eq(quizzes.userId, userId), eq(quizzes.id, quizId)))
+		.where(eq(quizzes.id, quizId))
 		.limit(1)
 		.get();
 
@@ -59,7 +80,7 @@ export const getQuizWithDetails = async (
 			completedAt: quizAttempts.completedAt
 		})
 		.from(quizAttempts)
-		.where(and(eq(quizzes.userId, userId), eq(quizAttempts.quizId, quizId)))
+		.where(eq(quizAttempts.quizId, quizId))
 		.orderBy(desc(quizAttempts.startedAt));
 
 	const tfQuestions = await db
@@ -117,7 +138,7 @@ export const getUserQuizzesWithDetails = async (
 		.where(eq(quizzes.userId, userId));
 
 	const detailed = await Promise.all(
-		userQuizzes.map(async q => getQuizWithDetails(q.id, userId))
+		userQuizzes.map(async q => getQuizWithDetails(q.id))
 	);
 
 	return detailed.filter((d): d is QuizWithDetails => !!d);

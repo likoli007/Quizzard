@@ -1,0 +1,184 @@
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { db } from '@/db';
+import { eq } from 'drizzle-orm';
+import { quizAnswers } from '@/db/schema/quizAnswers';
+import { getQuizWithDetails } from '@/modules/quiz/server/query';
+import { PageHeading } from '@/components/common/page-heading';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { CheckCircle, XCircle, MinusCircle } from 'lucide-react';
+import { QuizWithDetails } from '@/modules/quiz/server/types';
+
+interface ResultsPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function QuizResultsPage({ params }: ResultsPageProps) {
+  const { id: quizId } = await params;
+  const userId = 'temp';
+
+  const quiz: QuizWithDetails | undefined = await getQuizWithDetails(quizId);
+  if (!quiz) return notFound();
+  if (quiz.attempts.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <PageHeading heading="No Attempts Yet" subheading="Take this quiz to see results." />
+        <Link href={`/quiz/${quizId}`}><Button>Start Quiz</Button></Link>
+      </div>
+    );
+  }
+  const latest = quiz.attempts[0];
+
+  const rows = await db
+    .select({
+      questionId: quizAnswers.questionId,
+      selectedAnswer: quizAnswers.selectedAnswer,
+      isCorrect: quizAnswers.isCorrect
+    })
+    .from(quizAnswers)
+    .where(eq(quizAnswers.quizAttemptId, latest.id));
+
+  const answerMap = Object.fromEntries(
+    rows.map(r => [
+      r.questionId,
+      { selected: r.selectedAnswer, isCorrect: r.isCorrect }
+    ])
+  );
+
+  const tfQs = quiz.trueFalseQuestions ?? [];
+  const mcQs = quiz.multipleChoiceQuestions ?? [];
+  const totalQuestions = tfQs.length + mcQs.length;
+  const correctCount = rows.filter(r => r.isCorrect).length;
+  const pct = totalQuestions ? Math.round((correctCount / totalQuestions) * 100) : 0;
+
+  return (
+    <div className="container mx-auto px-4 py-12 space-y-8">
+      <PageHeading
+        heading={`Results: ${quiz.title}`}
+        subheading={`You got ${correctCount}/${totalQuestions} (${pct}%)`}
+      />
+
+      <div className="flex flex-wrap gap-2">
+        <Badge variant="outline">Correct: {correctCount}</Badge>
+        <Badge variant="outline">Total: {totalQuestions}</Badge>
+        <Badge variant="outline">Percent: {pct}%</Badge>
+        <Badge variant="outline">Time: {latest.timeSpent}s</Badge>
+      </div>
+
+      <div className="space-y-6">
+        {tfQs.map((q, i) => {
+          const ans = answerMap[q.id] ?? { selected: -1, isCorrect: false };
+          const wasAnswered = ans.selected === 0 || ans.selected === 1;
+          const wasCorrect = ans.isCorrect;
+          const correctNum = quiz.answerKey?.[q.id] === true ? 1 : 0;
+
+          return (
+            <Card key={q.id}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>{`Q${i + 1}. ${q.questionText}`}</CardTitle>
+                  {wasAnswered ? (
+                    wasCorrect ? (
+                      <CheckCircle className="text-green-500" />
+                    ) : (
+                      <XCircle className="text-red-500" />
+                    )
+                  ) : (
+                    <MinusCircle className="text-gray-400" />
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="flex gap-4">
+                <div className="flex flex-col items-center gap-1">
+                  <Badge
+                    variant={
+                      ans.selected === 1
+                        ? wasCorrect
+                          ? 'default'
+                          : 'secondary'
+                        : 'outline'
+                    }
+                  >
+                    True
+                  </Badge>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <Badge
+                    variant={
+                      ans.selected === 0
+                        ? wasCorrect
+                          ? 'default'
+                          : 'secondary'
+                        : 'outline'
+                    }
+                  >
+                    False
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+
+        {mcQs.map((q, idx) => {
+          const num = tfQs.length + idx + 1;
+          const ans = answerMap[q.id] ?? { selected: -1, isCorrect: false };
+          const wasAnswered = ans.selected >= 0;
+          const wasCorrect = ans.isCorrect;
+          const correctIndex = (quiz.answerKey?.[q.id] as number) ?? -1;
+
+          const raw = q.options as unknown;
+          let opts: string[];
+          if (Array.isArray(raw)) {
+            opts = raw;
+          } else {
+            const s = typeof raw === 'string' ? raw : '';
+            opts = s.split(',').map(x => x.trim()).filter(Boolean);
+          }
+
+          return (
+            <Card key={q.id}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>{`Q${num}. ${q.questionText}`}</CardTitle>
+                  {wasAnswered ? (
+                    wasCorrect ? (
+                      <CheckCircle className="text-green-500" />
+                    ) : (
+                      <XCircle className="text-red-500" />
+                    )
+                  ) : (
+                    <MinusCircle className="text-gray-400" />
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {opts.map((opt, j) => {
+                  const isUser = ans.selected === j;
+                  const isRight = j === correctIndex;
+                  let variant: 'default' | 'outline' | 'secondary' = 'outline';
+                  if (isUser && isRight) variant = 'default';
+                  else if (isUser && !isRight) variant = 'secondary';
+                  else if (!isUser && isRight) variant = 'default';
+
+                  return (
+                    <div key={j} className="flex flex-col items-start gap-1">
+                      <Badge variant={variant}>{opt}</Badge>
+                    </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      <CardFooter className="flex gap-4">
+        <Link href={`/quiz/${quizId}`}><Button>Retry Quiz</Button></Link>
+        <Link href={`/topics/${quiz.topicId}`}><Button variant="outline">Back to Topic</Button></Link>
+      </CardFooter>
+    </div>
+  );
+}

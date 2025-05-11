@@ -72,18 +72,17 @@ export const CreateTopicQuizForm = ({
 		});
 
 	const onSubmit = async (data: CreateTopicQuizInput) => {
-		console.log('data', data);
 		setIsPending(true);
 		try {
-			await createTopicWithQuiz(data, userId);
+			const { quizId } = await createTopicWithQuiz(data, userId);
 			toast.success('Topic & quiz created');
-			router.push('/dashboard/quizzes');
+			router.push(`/quiz/${quizId}`);
 		} catch (err: any) {
 			toast.error(err.message ?? 'Something went wrong');
 		} finally {
 			setIsPending(false);
 		}
-	};
+	};		
 
 	console.log('formState', formState.errors);
 
