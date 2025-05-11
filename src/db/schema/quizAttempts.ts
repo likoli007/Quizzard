@@ -13,8 +13,8 @@ export const quizAttempts = sqliteTable('quiz_attempts', {
 	quizId: text('quiz_id')
 		.notNull()
 		.references(() => quizzes.id),
-	score: integer('score'),
-	timeSpent: integer('time_spent'),
+	score: integer('score').notNull(),
+	timeSpent: integer('time_spent').notNull(),
 	startedAt: text('started_at')
 		.notNull()
 		.default(sql`CURRENT_TIMESTAMP`),

@@ -3,7 +3,7 @@ import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { z } from 'zod';
 
 import { topics } from './topics';
-import { users } from './user';
+import { users } from './users';
 import { quizAttempts } from './quizAttempts';
 import { quizKeyEntries } from './quizKeys';
 import { multipleChoiceQuestions, trueFalseQuestions } from './questions';

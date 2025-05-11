@@ -13,7 +13,7 @@ import { NavigationButton } from '@/components/navigation/navigation-button';
 const poppins = Poppins({ subsets: ['latin'], weight: ['400'] });
 
 export const metadata: Metadata = {
-	title: 'Task 06'
+	title: 'Quizzard'
 };
 
 const RootLayout = ({
