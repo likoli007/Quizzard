@@ -1,18 +1,19 @@
+'use client';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Medal } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 import { cn } from '@/lib/utils';
 import { LeaderboardCard } from '@/components/leaderboard/LeaderboardCard';
 
 type StickyLeaderboardProps = {
 	leaders: { id: string; name: string; score: number }[];
-	currentUserId?: string;
 };
 
-const StickyLeaderboard = ({
-	leaders,
-	currentUserId
-}: StickyLeaderboardProps) => {
+const StickyLeaderboard = ({ leaders }: StickyLeaderboardProps) => {
+	const { data: session } = useSession();
+	const currentUserId = session?.user?.id;
 	const sortedLeaders = leaders.toSorted((a, b) => b.score - a.score);
 	const currentUser = currentUserId
 		? sortedLeaders.find(u => u.id === currentUserId)

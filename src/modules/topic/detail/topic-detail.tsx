@@ -22,6 +22,7 @@ export default function TopicDetail({ topic }: TopicDetailProps) {
 			</Button>
 
 			<TopicDetailHeader
+				id={topic.id}
 				title={topic.title}
 				category={topic.category}
 				readTime={topic.readTime}
