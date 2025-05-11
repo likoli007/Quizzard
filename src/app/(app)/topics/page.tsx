@@ -1,14 +1,14 @@
-// app/topics/page.tsx
 import Link from 'next/link';
 
 import { PageHeading } from '@/components/common/page-heading';
 import { Button } from '@/components/ui/button';
 import { getTopics } from '@/modules/topic/server/query';
 import { TopicCard } from '@/modules/topic/card/topic-card';
+import { auth } from '@/auth';
 
 export default async function TopicsPage() {
 	const allTopics = await getTopics();
-
+	const session = await auth();
 	return (
 		<div className="container mx-auto px-4 py-12">
 			<PageHeading
@@ -17,9 +17,11 @@ export default async function TopicsPage() {
 					knowledge."
 			/>
 			<div className="mb-8 flex flex-wrap gap-4">
-				<Button asChild size="lg">
-					<Link href="/create">+ Add topic</Link>
-				</Button>
+				{session?.user && (
+					<Button asChild size="lg">
+						<Link href="/create">+ Add topic</Link>
+					</Button>
+				)}
 			</div>
 			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 				{allTopics.map(topic => (
