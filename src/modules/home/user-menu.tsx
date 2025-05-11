@@ -1,7 +1,8 @@
 'use client';
 
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { User } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -38,7 +39,9 @@ export const UserMenu = () => {
 						</DropdownMenuItem>
 					</>
 				) : (
-					<DropdownMenuItem onClick={() => signIn()}>Log in</DropdownMenuItem>
+					<DropdownMenuItem onClick={() => redirect('/auth/login')}>
+						Log in
+					</DropdownMenuItem>
 				)}
 			</DropdownMenuContent>
 		</DropdownMenu>
