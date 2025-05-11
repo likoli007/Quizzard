@@ -24,24 +24,14 @@ export const questionSchema = z.discriminatedUnion('type', [
 	mcQuestionSchema
 ]);
 
-export const createTopicValidator = z.object({
-	title: z.string().min(1),
-	description: z.string().optional(),
-	content: z.string(),
-	readTime: z.string(),
-	category: z.string(),
-	userId: z.string(),
-	publishedAt: z.string().optional()
-});
-
 const createQuizPartSchema = z.object({
+	associatedTopicId: z.string().uuid(),
 	quizTitle: z.string().min(1),
 	quizDescription: z.string().optional(),
 	timeLimit: z.coerce.number().int().positive(),
 	questions: z.array(questionSchema).min(1)
 });
 
-export const createTopicQuizSchema =
-	createTopicValidator.merge(createQuizPartSchema);
+export const createQuizSchema = createQuizPartSchema;
 
-export type CreateTopicQuizInput = z.infer<typeof createTopicQuizSchema>;
+export type CreateTopicQuizInput = z.infer<typeof createQuizSchema>;

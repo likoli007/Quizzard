@@ -10,28 +10,16 @@ import {
 } from '@/db/schema/questions';
 import { quizKeyEntries } from '@/db/schema/quizKeys';
 import { quizzes } from '@/db/schema/quizzes';
-import { topics } from '@/db/schema/topics';
-import { createTopicQuizSchema } from '@/modules/quiz/components/create-quiz-form/schema';
+import { createQuizSchema } from '@/modules/quiz/components/create-quiz-form/schema';
 
 export const createTopicWithQuiz = async (
 	rawData: unknown,
 	userId: string
-): Promise<{ topicId: string; quizId: string }> => {
-	const data = createTopicQuizSchema.parse(rawData);
+): Promise<{ quizId: string }> => {
+	const data = createQuizSchema.parse(rawData);
 
 	return db.transaction(async tx => {
 		//TODO: check if this actually does a transaction
-		const topicId = uuid();
-		await tx.insert(topics).values({
-			id: topicId,
-			title: data.title,
-			description: data.description ?? null,
-			content: data.content,
-			readTime: data.readTime,
-			category: data.category,
-			userId,
-			...(data.publishedAt && { publishedAt: data.publishedAt })
-		});
 
 		const quizId = uuid();
 		await tx.insert(quizzes).values({
@@ -39,7 +27,7 @@ export const createTopicWithQuiz = async (
 			title: data.quizTitle,
 			description: data.quizDescription ?? null,
 			timeLimit: data.timeLimit,
-			topicId,
+			topicId: data.associatedTopicId,
 			userId
 		});
 
@@ -78,6 +66,6 @@ export const createTopicWithQuiz = async (
 			}
 		}
 
-		return { topicId, quizId };
+		return { quizId };
 	});
 };
