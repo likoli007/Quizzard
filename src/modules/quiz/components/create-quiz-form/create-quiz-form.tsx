@@ -173,17 +173,7 @@ export const CreateTopicQuizForm = ({
 				</section>
 
 				<section className="space-y-4">
-					<div className="flex items-center justify-between">
-						<h2 className="text-xl font-semibold">Questions</h2>
-						<div className="flex gap-2">
-							<Button variant="outline" size="sm" type="button" onClick={addTF}>
-								+ True/False
-							</Button>
-							<Button variant="outline" size="sm" type="button" onClick={addMC}>
-								+ Multiple-choice
-							</Button>
-						</div>
-					</div>
+					<h2 className="text-xl font-semibold">Questions</h2>
 
 					{fields.map((f, idx) => {
 						const name = `questions.${idx}` as const;
@@ -206,7 +196,7 @@ export const CreateTopicQuizForm = ({
 									name={`${name}.questionText`}
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>{`Q${idx + 1} Text`}</FormLabel>
+											<FormLabel>{`Question ${idx + 1} Text`}</FormLabel>
 											<FormControl>
 												<Input {...field} />
 											</FormControl>
@@ -223,6 +213,15 @@ export const CreateTopicQuizForm = ({
 							</div>
 						);
 					})}
+
+					<div className="flex justify-end gap-2 pt-2">
+						<Button variant="outline" size="sm" type="button" onClick={addTF}>
+							+ True/False
+						</Button>
+						<Button variant="outline" size="sm" type="button" onClick={addMC}>
+							+ Multiple-choice
+						</Button>
+					</div>
 				</section>
 
 				<Button type="submit" disabled={isPending}>
