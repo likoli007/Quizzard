@@ -1,7 +1,5 @@
 'use server';
 
-import Link from 'next/link';
-
 import { PageHeading } from '@/components/common/page-heading';
 import { mockLeaders } from '@/lib/mockData';
 import StickyLeaderboard from '@/components/leaderboard/StickyLeaderboard';

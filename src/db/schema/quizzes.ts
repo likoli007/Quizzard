@@ -21,7 +21,10 @@ export const quizzes = sqliteTable('quizzes', {
 		.default(sql`CURRENT_TIMESTAMP`),
 	updatedAt: text('updated_at')
 		.notNull()
-		.default(sql`CURRENT_TIMESTAMP`)
+		.default(sql`CURRENT_TIMESTAMP`),
+	deleted: integer('deleted')
+		.notNull()
+		.default(sql`0`)
 });
 
 export const quizzesRelations = relations(quizzes, ({ one, many }) => ({

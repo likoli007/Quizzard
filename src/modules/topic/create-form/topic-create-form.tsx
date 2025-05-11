@@ -7,7 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 
 import {
-	createTopicValidator,
+	Topic,
+	UpdateTopicInput,
 	type CreateTopicInput
 } from '@/db/schema/topics';
 import {
@@ -21,36 +22,70 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import createTopic from '@/app/server-actions/topics';
+import createTopic, { updateTopic } from '@/app/server-actions/topics/topics';
+import {
+	createTopicValidator,
+	updateTopicValidator
+} from '@/app/server-actions/topics/validators';
 
-export const CreateTopicForm = ({ userId }: { userId: string }) => {
+type CreateTopicFormProps = {
+	userId: string;
+	topic?: Topic;
+	onSubmitAction?: () => void;
+};
+
+type FormValues = CreateTopicInput & Partial<UpdateTopicInput>;
+
+export const CreateTopicForm = ({
+	userId,
+	topic,
+	onSubmitAction
+}: CreateTopicFormProps) => {
 	const router = useRouter();
 	const [isPending, setIsPending] = useState(false);
 
-	const form = useForm<CreateTopicInput>({
-		resolver: zodResolver(createTopicValidator),
+	const form = useForm<FormValues>({
+		resolver: zodResolver(topic ? updateTopicValidator : createTopicValidator),
 		defaultValues: {
-			title: '',
-			description: '',
-			readTime: 5,
-			content: '',
-			category: '',
+			id: topic?.id || '',
+			title: topic?.title || '',
+			description: topic?.description || '',
+			readTime: Number(topic?.readTime) || 5,
+			content: topic?.content || '',
+			category: topic?.category || '',
 			userId,
-			publishedAt: ''
+			publishedAt: topic?.publishedAt || ''
 		}
 	});
 
 	const onSubmit = async (values: CreateTopicInput) => {
+		console.log('1');
 		setIsPending(true);
-		try {
-			await createTopic(values);
-			toast.success('Topic created!');
-			router.push('/topics');
-		} catch (err: any) {
-			toast.error(err.message || 'Failed to create topic');
-		} finally {
-			setIsPending(false);
+		if (topic) {
+			console.log('2');
+			try {
+				await updateTopic(values);
+				toast.success('Topic updated!');
+				router.refresh();
+			} catch (_err: any) {
+				toast.error('Update failed');
+				console.error(_err);
+			} finally {
+				setIsPending(false);
+			}
+		} else {
+			console.log('3');
+			try {
+				await createTopic(values);
+				toast.success('Topic created!');
+				router.push('/topics');
+			} catch (_err: any) {
+				toast.error('Failed to create topic');
+			} finally {
+				setIsPending(false);
+			}
 		}
+		onSubmitAction?.();
 	};
 
 	return (
@@ -130,7 +165,7 @@ export const CreateTopicForm = ({ userId }: { userId: string }) => {
 				/>
 
 				<Button type="submit" disabled={isPending}>
-					{isPending ? 'Saving…' : 'Create Topic'}
+					{topic ? 'Update Topic' : 'Create Topic'}
 				</Button>
 			</form>
 		</Form>

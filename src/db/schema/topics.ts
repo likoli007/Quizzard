@@ -4,6 +4,10 @@ import { z } from 'zod';
 
 import { favorites } from './favorites';
 import { quizzes } from './quizzes';
+import {
+	createTopicValidator,
+	updateTopicValidator
+} from '@/app/server-actions/topics/validators';
 
 export const topics = sqliteTable('topics', {
 	id: text('id').primaryKey(),
@@ -31,13 +35,6 @@ export const topicsRelations = relations(topics, ({ one, many }) => ({
 }));
 
 export type Topic = typeof topics.$inferSelect;
-export const createTopicValidator = z.object({
-	title: z.string().min(1),
-	description: z.string().optional(),
-	content: z.string(),
-	category: z.string(),
-	readTime: z.coerce.number().int(),
-	userId: z.string(),
-	publishedAt: z.string().optional()
-});
+
 export type CreateTopicInput = z.infer<typeof createTopicValidator>;
+export type UpdateTopicInput = z.infer<typeof updateTopicValidator>;
