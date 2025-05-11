@@ -53,7 +53,7 @@ export const CreatePageShell = ({
 						title="Create a New Topic"
 						description="Fill in the details below to create a new educational topic."
 					>
-						<CreateTopicForm userId="temp" />
+						<CreateTopicForm userId={userId} />
 					</CreateTabsCard>
 				</TabsContent>
 
@@ -62,7 +62,7 @@ export const CreatePageShell = ({
 						title="Create a New Quiz"
 						description="Create a quiz to test knowledge on a specific topic."
 					>
-						<CreateTopicQuizForm userId="temp" topics={topics} />
+						<CreateTopicQuizForm userId={userId} topics={topics} />
 					</CreateTabsCard>
 				</TabsContent>
 			</Tabs>

@@ -77,7 +77,7 @@ export const CreateTopicQuizForm = ({
 		try {
 			await createTopicWithQuiz(data, userId);
 			toast.success('Topic & quiz created');
-			router.push('/dashboard/quizzes');
+			router.push(`/topics/${data.associatedTopicId}`);
 		} catch (err: any) {
 			toast.error(err.message ?? 'Something went wrong');
 		} finally {
