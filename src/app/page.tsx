@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
-import { HomeCard } from '@/components/home/card/home-card';
-import { homeCards } from '@/components/home/home-cards';
+import { HomeCard } from '@/modules/home/card/home-card';
+import { homeCards } from '@/modules/home/home-cards';
 import { Button } from '@/components/ui/button';
 
 const Home = () => (

@@ -6,9 +6,9 @@ import { BookOpen } from 'lucide-react';
 import Link from 'next/link';
 
 import { Providers } from '@/components/providers';
-import { navigationItems } from '@/components/navigation/navigation-items';
-import { NavigationButton } from '@/components/navigation/navigation-button';
-import { UserMenu } from '@/components/home/user-menu';
+import { navigationItems } from '@/modules/navigation/navigation-items';
+import { NavigationButton } from '@/modules/navigation/navigation-button';
+import { UserMenu } from '@/modules/home/user-menu';
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['400'] });
 

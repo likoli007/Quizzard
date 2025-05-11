@@ -11,6 +11,21 @@ import {
 
 import { type QuizWithDetails } from './types';
 
+export async function getTopicQuizzes(topicId: string) {
+	return db
+		.select({
+			id: quizzes.id,
+			title: quizzes.title,
+			description: quizzes.description,
+			timeLimit: quizzes.timeLimit,
+			createdAt: quizzes.createdAt,
+			updatedAt: quizzes.updatedAt
+		})
+		.from(quizzes)
+		.where(and(eq(quizzes.topicId, topicId), eq(quizzes.deleted, 0)))
+		.orderBy(desc(quizzes.createdAt));
+}
+
 export const getQuizWithDetails = async (
 	quizId: string,
 	userId: string
