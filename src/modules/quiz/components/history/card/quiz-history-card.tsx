@@ -1,3 +1,6 @@
+import { BarChart, BookOpen, Calendar, Clock } from 'lucide-react';
+import Link from 'next/link';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,11 +13,9 @@ import {
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { formatDate, formatDateWithTime } from '@/components/utils/date';
-import { QuizAttempt } from '@/db/schema/quizAttempts';
-import { Quiz } from '@/db/schema/quizzes';
+import { type QuizAttempt } from '@/db/schema/quizAttempts';
+import { type Quiz } from '@/db/schema/quizzes';
 import { getTopic } from '@/modules/topic/server/query';
-import { BarChart, BookOpen, Calendar, Clock } from 'lucide-react';
-import Link from 'next/link';
 
 type QuizHistoryCard = {
 	quiz: Quiz;
@@ -22,11 +23,11 @@ type QuizHistoryCard = {
 	totalQuestions: number;
 };
 
-export async function QuizHistoryCard({
+export const QuizHistoryCard = async ({
 	quiz,
 	quizAttempt,
 	totalQuestions
-}: QuizHistoryCard) {
+}: QuizHistoryCard) => {
 	// replace with actual user id
 	const userId = 'temp';
 	const topic = await getTopic(quiz.topicId);
@@ -91,4 +92,4 @@ export async function QuizHistoryCard({
 			</CardFooter>
 		</Card>
 	);
-}
+};

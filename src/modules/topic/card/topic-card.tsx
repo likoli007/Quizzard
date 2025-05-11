@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Star } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -14,18 +15,18 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
-interface TopicCard {
+type TopicCard = {
 	id: string;
 	title: string;
 	description?: string | null;
 	content: string;
 	category: string;
 	readTime: string;
-}
+};
 
-interface TopicCardProps {
+type TopicCardProps = {
 	topic: TopicCard;
-}
+};
 
 export const TopicCard: React.FC<TopicCardProps> = ({ topic }) => {
 	const [isFavorite, setIsFavorite] = useState(false);

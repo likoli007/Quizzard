@@ -1,12 +1,13 @@
 'use server';
 
 import { v4 as uuid } from 'uuid';
-import { db } from '@/db';
-import { favorites } from '@/db/schema/favorites';
-import { eq, and } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
-export async function toggleFavorite(topicId: string, userId: string) {
+import { db } from '@/db';
+import { favorites } from '@/db/schema/favorites';
+
+const toggleFavorite = async (topicId: string, userId: string) => {
 	const [existing] = await db
 		.select()
 		.from(favorites)
@@ -24,4 +25,6 @@ export async function toggleFavorite(topicId: string, userId: string) {
 
 	revalidatePath('/topics');
 	revalidatePath(`/topics/${topicId}`);
-}
+};
+
+export default toggleFavorite;

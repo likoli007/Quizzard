@@ -28,8 +28,8 @@ export const formatDateWithTime = (date: Date | string) => {
 	return date.toLocaleDateString('en-US', options);
 };
 
-export function formatTimeFromSeconds(seconds: number): string {
+export const formatTimeFromSeconds = (seconds: number): string => {
 	const mins = Math.floor(seconds / 60);
 	const secs = seconds % 60;
 	return `${mins}:${secs.toString().padStart(2, '0')}`;
-}
+};

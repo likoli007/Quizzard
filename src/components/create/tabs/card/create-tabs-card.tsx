@@ -11,18 +11,18 @@ type CreateTabsCardProps = React.PropsWithChildren<{
 	description?: string | null;
 }>;
 
-export function CreateTabsCard({
+const CreateTabsCard = ({
 	children,
 	title,
 	description
-}: CreateTabsCardProps) {
-	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>{title}</CardTitle>
-				<CardDescription>{description && description}</CardDescription>
-			</CardHeader>
-			<CardContent className="space-y-4">{children}</CardContent>
-		</Card>
-	);
-}
+}: CreateTabsCardProps) => (
+	<Card>
+		<CardHeader>
+			<CardTitle>{title}</CardTitle>
+			<CardDescription>{description && description}</CardDescription>
+		</CardHeader>
+		<CardContent className="space-y-4">{children}</CardContent>
+	</Card>
+);
+
+export default CreateTabsCard;

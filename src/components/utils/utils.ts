@@ -1,7 +1,7 @@
-export function debounce<F extends (...args: any[]) => void>(
+export const debounce = <F extends (...args: any[]) => void>(
 	fn: F,
 	delay: number
-): (...args: Parameters<F>) => void {
+): ((...args: Parameters<F>) => void) => {
 	let timeoutId: ReturnType<typeof setTimeout>;
 
 	return (...args: Parameters<F>) => {
@@ -10,13 +10,13 @@ export function debounce<F extends (...args: any[]) => void>(
 			fn(...args);
 		}, delay);
 	};
-}
+};
 
 // First call is executed immediately, then subsequent calls are debounced
-export function debounceLeading<F extends (...args: any[]) => void>(
+export const debounceLeading = <F extends (...args: any[]) => void>(
 	fn: F,
 	delay: number
-): (...args: Parameters<F>) => void {
+): ((...args: Parameters<F>) => void) => {
 	let timer: ReturnType<typeof setTimeout> | null = null;
 
 	return (...args: Parameters<F>) => {
@@ -30,4 +30,4 @@ export function debounceLeading<F extends (...args: any[]) => void>(
 			timer = null;
 		}, delay);
 	};
-}
+};
