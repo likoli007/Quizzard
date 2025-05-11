@@ -1,16 +1,15 @@
-'use client';
-
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Share2 } from 'lucide-react';
 import { toast } from 'sonner';
+
+import { Button } from '@/components/ui/button';
 import { debounceLeading } from '@/components/utils/utils';
 
-interface TopicDetailFooterProps {
+type TopicDetailFooterProps = {
 	id: string;
-}
+};
 
-export default function TopicDetailFooter({ id }: TopicDetailFooterProps) {
+const TopicDetailFooter = ({ id }: TopicDetailFooterProps) => {
 	const handleShare = (e: { preventDefault: () => void }) => {
 		e.preventDefault();
 		const url = `${window.location.origin}/topics/${id}`;
@@ -33,4 +32,6 @@ export default function TopicDetailFooter({ id }: TopicDetailFooterProps) {
 			)}
 		</div>
 	);
-}
+};
+
+export default TopicDetailFooter;

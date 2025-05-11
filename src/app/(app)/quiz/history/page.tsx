@@ -2,7 +2,7 @@ import { QuizHistoryStatisticCard } from '@/modules/quiz/components/history/stat
 import { getUserQuizzesWithDetails } from '@/modules/quiz/server/query';
 import { QuizHistoryCard } from '@/modules/quiz/components/history/card/quiz-history-card';
 
-export default async function QuizHistoryPage() {
+const QuizHistoryPage = async () => {
 	// TODO: replace with actual authenticated user ID
 	const userId = 'temp';
 	const queryLimit = 4;
@@ -12,8 +12,8 @@ export default async function QuizHistoryPage() {
 	const historyEntries = quizzes
 		.flatMap(quiz => {
 			const totalQuestions =
-				(quiz.trueFalseQuestions?.length || 0) +
-				(quiz.multipleChoiceQuestions?.length || 0);
+				(quiz.trueFalseQuestions?.length ?? 0) +
+				(quiz.multipleChoiceQuestions?.length ?? 0);
 
 			return quiz.attempts.map(attempt => ({ quiz, attempt, totalQuestions }));
 		})
@@ -75,4 +75,6 @@ export default async function QuizHistoryPage() {
 			</div>
 		</div>
 	);
-}
+};
+
+export default QuizHistoryPage;

@@ -6,7 +6,7 @@ import { getTopics } from '@/modules/topic/server/query';
 import { TopicCard } from '@/modules/topic/card/topic-card';
 import { auth } from '@/auth';
 
-export default async function TopicsPage() {
+const TopicsPage = async () => {
 	const allTopics = await getTopics();
 	const session = await auth();
 	return (
@@ -30,4 +30,6 @@ export default async function TopicsPage() {
 			</div>
 		</div>
 	);
-}
+};
+
+export default TopicsPage;

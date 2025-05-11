@@ -1,7 +1,8 @@
+import Link from 'next/link';
+
 import { HomeCard } from '@/modules/home/card/home-card';
 import { homeCards } from '@/modules/home/home-cards';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 const Home = () => (
 	<div className="container mx-auto px-4 py-12">

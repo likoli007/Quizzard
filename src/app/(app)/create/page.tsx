@@ -1,17 +1,17 @@
 'use client';
 
-import type React from 'react';
-
-import { useEffect, useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState, useEffect } from 'react';
 import { FileText, HelpCircle } from 'lucide-react';
-import { CreateTopicQuizForm } from '@/modules/quiz/components/create-quiz-form/create-quiz-form';
-import { CreateTabsCard } from '@/components/create/tabs/card/create-tabs-card';
-import { CreateTopicForm } from '@/modules/topic/create-form/topic-create-form';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 
-export default function CreatePage() {
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CreateTopicQuizForm } from '@/modules/quiz/components/create-quiz-form/create-quiz-form';
+import { CreateTopicForm } from '@/modules/topic/create-form/topic-create-form';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+
+import CreateTabsCard from '@/components/create/tabs/card/create-tabs-card';
+
+const CreatePage = () => {
 	const [activeTab, setActiveTab] = useState('topic');
 	const { data: session, status } = useSession();
 
@@ -78,4 +78,6 @@ export default function CreatePage() {
 			</div>
 		);
 	}
-}
+};
+
+export default CreatePage;
