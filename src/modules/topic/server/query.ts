@@ -52,7 +52,8 @@ export const getTopic = async (id: string) => {
 			readTime: topics.readTime,
 			userId: topics.userId,
 			createdAt: topics.createdAt,
-			updatedAt: topics.updatedAt
+			updatedAt: topics.updatedAt,
+			deleted: topics.deleted
 		})
 		.from(topics)
 		.where(and(eq(topics.id, id), eq(topics.deleted, 0)));
