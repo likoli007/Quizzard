@@ -1,4 +1,5 @@
 export type QuizWithDetails = {
+  [x: string]: any;
 	id: string;
 	title: string;
 	description: string | null;

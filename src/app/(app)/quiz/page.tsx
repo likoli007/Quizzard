@@ -1,4 +1,3 @@
-// app/quiz/page.tsx
 import Link from 'next/link';
 import { getAllQuizzes } from '@/modules/quiz/server/query';
 import { PageHeading } from '@/components/common/page-heading';

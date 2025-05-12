@@ -8,6 +8,8 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { QuizWithDetails } from '../server/types';
+import { createQuizAttempt } from '@/app/server-actions/quiz/attempt';
+import { submitQuizAnswer } from '@/app/server-actions/quiz/answer';
 
 type Props = { quiz: QuizWithDetails };
 
@@ -28,22 +30,23 @@ export default function QuizPageClient({ quiz }: Props) {
   const handleAnswer = (questionId: string, value: boolean | number) => {
     setAnswers(a => ({ ...a, [questionId]: value }));
   };
-
   const handleSubmit = async () => {
-    const attemptRes = await fetch(`/api/quiz/${quiz.id}/attempt`, { method: 'POST' });
-    if (!attemptRes.ok) throw new Error(await attemptRes.text());
-    const { attemptId } = await attemptRes.json();
-
+    const { attemptId } = await createQuizAttempt({
+      quizId: quiz.id,
+      userId: 'temp'
+    });
+  
     await Promise.all(
-      Object.entries(answers).map(([qid, ans]) =>
-        fetch(`/api/quiz/${quiz.id}/answer`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ attemptId, questionId: qid, answer: ans }),
+      Object.entries(answers).map(([questionId, answer]) =>
+        submitQuizAnswer({
+          quizId: quiz.id,
+          attemptId,
+          questionId,
+          answer,
         })
       )
     );
-
+  
     router.push(`/quiz/${quiz.id}/results`);
   };
 

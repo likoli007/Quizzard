@@ -5,7 +5,13 @@ import { eq } from 'drizzle-orm';
 import { quizAnswers } from '@/db/schema/quizAnswers';
 import { getQuizWithDetails } from '@/modules/quiz/server/query';
 import { PageHeading } from '@/components/common/page-heading';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, XCircle, MinusCircle } from 'lucide-react';
@@ -25,10 +31,13 @@ export default async function QuizResultsPage({ params }: ResultsPageProps) {
     return (
       <div className="container mx-auto px-4 py-12">
         <PageHeading heading="No Attempts Yet" subheading="Take this quiz to see results." />
-        <Link href={`/quiz/${quizId}`}><Button>Start Quiz</Button></Link>
+        <Link href={`/quiz/${quizId}`}>
+          <Button>Start Quiz</Button>
+        </Link>
       </div>
     );
   }
+
   const latest = quiz.attempts[0];
 
   const rows = await db
@@ -70,17 +79,15 @@ export default async function QuizResultsPage({ params }: ResultsPageProps) {
       <div className="space-y-6">
         {tfQs.map((q, i) => {
           const ans = answerMap[q.id] ?? { selected: -1, isCorrect: false };
-          const wasAnswered = ans.selected === 0 || ans.selected === 1;
-          const wasCorrect = ans.isCorrect;
-          const correctNum = quiz.answerKey?.[q.id] === true ? 1 : 0;
+          const correctIndex = quiz.answerKey?.[q.id] === true ? 1 : 0;
 
           return (
             <Card key={q.id}>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>{`Q${i + 1}. ${q.questionText}`}</CardTitle>
-                  {wasAnswered ? (
-                    wasCorrect ? (
+                  {ans.selected !== -1 ? (
+                    ans.isCorrect ? (
                       <CheckCircle className="text-green-500" />
                     ) : (
                       <XCircle className="text-red-500" />
@@ -90,32 +97,28 @@ export default async function QuizResultsPage({ params }: ResultsPageProps) {
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="flex gap-4">
-                <div className="flex flex-col items-center gap-1">
+              <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-semibold mb-1">Your Answer</p>
                   <Badge
                     variant={
-                      ans.selected === 1
-                        ? wasCorrect
+                      ans.selected !== -1
+                        ? ans.isCorrect
                           ? 'default'
                           : 'secondary'
                         : 'outline'
                     }
                   >
-                    True
+                    {ans.selected === 1
+                      ? 'True'
+                      : ans.selected === 0
+                      ? 'False'
+                      : 'No Answer'}
                   </Badge>
                 </div>
-                <div className="flex flex-col items-center gap-1">
-                  <Badge
-                    variant={
-                      ans.selected === 0
-                        ? wasCorrect
-                          ? 'default'
-                          : 'secondary'
-                        : 'outline'
-                    }
-                  >
-                    False
-                  </Badge>
+                <div>
+                  <p className="text-sm font-semibold mb-1">Correct Answer</p>
+                  <Badge variant="default">{correctIndex === 1 ? 'True' : 'False'}</Badge>
                 </div>
               </CardContent>
             </Card>
@@ -125,26 +128,27 @@ export default async function QuizResultsPage({ params }: ResultsPageProps) {
         {mcQs.map((q, idx) => {
           const num = tfQs.length + idx + 1;
           const ans = answerMap[q.id] ?? { selected: -1, isCorrect: false };
-          const wasAnswered = ans.selected >= 0;
-          const wasCorrect = ans.isCorrect;
           const correctIndex = (quiz.answerKey?.[q.id] as number) ?? -1;
 
+          let opts: string[] = [];
           const raw = q.options as unknown;
-          let opts: string[];
+          
           if (Array.isArray(raw)) {
             opts = raw;
-          } else {
-            const s = typeof raw === 'string' ? raw : '';
-            opts = s.split(',').map(x => x.trim()).filter(Boolean);
+          } else if (typeof raw === 'string') {
+            opts = raw.split(',').map(s => s.trim());
           }
+
+          const userAnswer = opts[ans.selected] ?? 'No Answer';
+          const correctAnswer = opts[correctIndex] ?? 'Unknown';
 
           return (
             <Card key={q.id}>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>{`Q${num}. ${q.questionText}`}</CardTitle>
-                  {wasAnswered ? (
-                    wasCorrect ? (
+                  {ans.selected !== -1 ? (
+                    ans.isCorrect ? (
                       <CheckCircle className="text-green-500" />
                     ) : (
                       <XCircle className="text-red-500" />
@@ -154,21 +158,25 @@ export default async function QuizResultsPage({ params }: ResultsPageProps) {
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {opts.map((opt, j) => {
-                  const isUser = ans.selected === j;
-                  const isRight = j === correctIndex;
-                  let variant: 'default' | 'outline' | 'secondary' = 'outline';
-                  if (isUser && isRight) variant = 'default';
-                  else if (isUser && !isRight) variant = 'secondary';
-                  else if (!isUser && isRight) variant = 'default';
-
-                  return (
-                    <div key={j} className="flex flex-col items-start gap-1">
-                      <Badge variant={variant}>{opt}</Badge>
-                    </div>
-                  );
-                })}
+              <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-semibold mb-1">Your Answer</p>
+                  <Badge
+                    variant={
+                      ans.selected !== -1
+                        ? ans.isCorrect
+                          ? 'default'
+                          : 'secondary'
+                        : 'outline'
+                    }
+                  >
+                    {userAnswer}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold mb-1">Correct Answer</p>
+                  <Badge variant="default">{correctAnswer}</Badge>
+                </div>
               </CardContent>
             </Card>
           );
@@ -176,8 +184,12 @@ export default async function QuizResultsPage({ params }: ResultsPageProps) {
       </div>
 
       <CardFooter className="flex gap-4">
-        <Link href={`/quiz/${quizId}`}><Button>Retry Quiz</Button></Link>
-        <Link href={`/topics/${quiz.topicId}`}><Button variant="outline">Back to Topic</Button></Link>
+        <Link href={`/quiz/${quizId}`}>
+          <Button>Retry Quiz</Button>
+        </Link>
+        <Link href={`/topics/${quiz.topicId}`}>
+          <Button variant="outline">Back to Topic</Button>
+        </Link>
       </CardFooter>
     </div>
   );
