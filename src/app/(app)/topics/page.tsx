@@ -10,7 +10,7 @@ import { getFavoriteTopicIds } from '@/app/server-actions/topics/topics';
 const TopicsPage = async () => {
 	const allTopics = await getTopics();
 	const session = await auth();
-	let userId = null;
+	let userId = undefined;
 
 	if (session?.user?.id !== undefined) {
 		userId = session.user.id as string;

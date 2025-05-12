@@ -31,7 +31,7 @@ type TopicCardBase = {
 
 type TopicCardProps = {
 	topic: TopicCardBase;
-	userId: string | null;
+	userId: string | undefined;
 	isInitiallyFavorite: boolean;
 };
 

@@ -7,11 +7,7 @@ import { auth } from '@/auth';
 const FavoritesPage = async () => {
 	const session = await auth();
 
-	if (!session) {
-		redirect('/auth/login');
-	}
-
-	if (session.user?.id === undefined) {
+	if (!session?.user?.id) {
 		redirect('/auth/login');
 	}
 

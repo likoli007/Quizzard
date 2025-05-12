@@ -7,15 +7,13 @@ import { auth } from '@/auth';
 const CreatePage = async () => {
 	const session = await auth();
 
-	if (!session) {
+	if (!session?.user?.id) {
 		redirect('/auth/login');
 	}
+
 	const topics = await getTopicsByUserId(session.user!.id as string);
 
-	//TODO: remove as string
-	return (
-		<CreatePageShell userId={session.user!.id as string} topics={topics} />
-	);
+	return <CreatePageShell userId={session.user!.id} topics={topics} />;
 };
 
 export default CreatePage;
