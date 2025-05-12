@@ -1,4 +1,4 @@
-import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -17,6 +17,9 @@ export const topics = sqliteTable('topics', {
 	content: text('content').notNull(),
 	category: text('category').notNull(),
 	userId: text('user_id'), //.notNull().references(() => users.id), TODO: uncomment once users table is functional
+	deleted: integer('deleted')
+		.notNull()
+		.default(sql`0`),
 	publishedAt: text('published_at')
 		.notNull()
 		.default(sql`CURRENT_TIMESTAMP`),

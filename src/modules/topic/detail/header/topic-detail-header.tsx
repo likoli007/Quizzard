@@ -11,6 +11,7 @@ import { deleteTopic } from '@/app/server-actions/topics/topics';
 import { useRouter } from 'next/navigation';
 import type { Topic } from '@/db/schema/topics';
 import { TopicDetailUpdateDialog } from '../update-dialog/topic-detail-update-dialog';
+import { DeleteButton } from '@/components/common/delete-button';
 
 type TopicDetailHeaderProps = {
 	topic: Topic;
@@ -20,21 +21,16 @@ export default ({ topic }: TopicDetailHeaderProps) => {
 	const [isFavorite, setIsFavorite] = useState(false);
 	const [isEditOpen, setIsEditOpen] = useState(false);
 	const toggleFavorite = () => setIsFavorite(f => !f);
-	const [deleting, setDeleting] = useState(false);
 	const router = useRouter();
 
 	const handleDelete = async () => {
-		if (!confirm('Are you sure you want to delete this topic?')) return;
-		setDeleting(true);
 		try {
 			await deleteTopic(topic.id);
 			toast.success('Topic deleted');
 			router.push('/topics');
 		} catch (err: any) {
-			console.error(err);
-			toast.error(err.message || 'Failed to delete');
-		} finally {
-			setDeleting(false);
+			// toast.error('Failed to delete');
+			toast.error(err.message);
 		}
 	};
 
@@ -58,14 +54,16 @@ export default ({ topic }: TopicDetailHeaderProps) => {
 						>
 							<Edit2 className="h-4 w-4" />
 						</Button>
-						<Button
-							variant="destructive"
-							onClick={handleDelete}
-							disabled={deleting}
-							className="flex items-center gap-2"
+
+						<DeleteButton
+							title="Delete topic"
+							description="Are you sure you want to delete this topic?"
+							deleteAction={handleDelete}
 						>
-							<Trash2 className="h-4 w-4" />
-						</Button>
+							<Button variant="destructive" className="flex items-center gap-2">
+								<Trash2 className="h-4 w-4" />
+							</Button>
+						</DeleteButton>
 						<Button
 							variant="outline"
 							onClick={toggleFavorite}

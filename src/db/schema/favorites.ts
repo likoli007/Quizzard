@@ -1,4 +1,4 @@
-import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { sql, relations } from 'drizzle-orm';
 
 import { topics } from './topics';
@@ -12,6 +12,9 @@ export const favorites = sqliteTable('favorites', {
 	topicId: text('topic_id')
 		.notNull()
 		.references(() => topics.id),
+	deleted: integer('deleted')
+		.notNull()
+		.default(sql`0`),
 	createdAt: text('created_at')
 		.notNull()
 		.default(sql`CURRENT_TIMESTAMP`)

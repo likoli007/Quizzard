@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -24,12 +23,6 @@ const TopicDetailFooter = ({ id }: TopicDetailFooterProps) => {
 				<Share2 className="mr-2 h-4 w-4" />
 				Share Article
 			</Button>
-			{/* TODO: when we have quizzes, change the condition */}
-			{true && (
-				<Button asChild size="lg">
-					<Link href={`/quiz/${id}`}>Take Quiz</Link>
-				</Button>
-			)}
 		</div>
 	);
 };
