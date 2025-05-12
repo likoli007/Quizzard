@@ -3,7 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useFieldArray, useFormContext } from 'react-hook-form';
+import {
+	useForm,
+	useFieldArray,
+	useFormContext,
+	type SubmitHandler
+} from 'react-hook-form';
 import { toast } from 'sonner';
 
 import {
@@ -23,40 +28,50 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import {
 	createQuizSchema,
 	type CreateTopicQuizInput
 } from '@/modules/quiz/components/create-quiz-form/schema';
-import { createTopicWithQuiz } from '@/app/server-actions/quizzes';
-import { Textarea } from '@/components/ui/textarea';
+import { createTopicWithQuiz, updateQuiz } from '@/app/server-actions/quizzes';
 import { type Topic } from '@/db/schema/topics';
 
 import { TrueFalseOption } from './true-false-option';
 import { MultipleChoiceOption } from './multiple-choice-option';
 
-//TODO: beautify :D
-export const CreateTopicQuizForm = ({
-	userId,
-	topics
-}: {
+type Mode = 'create' | 'edit';
+
+type QuizFormProps = {
+	mode: Mode;
 	userId: string;
 	topics: Topic[];
+	initialData?: CreateTopicQuizInput & { id: string };
+};
+
+export const TopicQuizForm: React.FC<QuizFormProps> = ({
+	mode,
+	userId,
+	topics,
+	initialData
 }) => {
 	const router = useRouter();
 	const [isPending, setIsPending] = useState(false);
 
 	const form = useForm<CreateTopicQuizInput>({
 		resolver: zodResolver(createQuizSchema),
-		defaultValues: {
-			timeLimit: 600,
-			questions: [],
-			quizTitle: '',
-			quizDescription: '',
-			associatedTopicId: ''
-		}
+		defaultValues:
+			mode === 'edit' && initialData
+				? initialData
+				: {
+						timeLimit: 600,
+						questions: [],
+						quizTitle: '',
+						quizDescription: '',
+						associatedTopicId: ''
+					}
 	});
 
-	const { control, handleSubmit, formState } = form;
+	const { control, handleSubmit, formState, watch } = form;
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'questions'
@@ -71,20 +86,23 @@ export const CreateTopicQuizForm = ({
 			answer: 0
 		});
 
-	const onSubmit = async (data: CreateTopicQuizInput) => {
+	const onSubmit: SubmitHandler<CreateTopicQuizInput> = async data => {
 		setIsPending(true);
 		try {
-			const { quizId } = await createTopicWithQuiz(data, userId);
-			toast.success('Topic & quiz created');
-			router.push(`/quiz/${quizId}`);
+			if (mode === 'create') {
+				await createTopicWithQuiz(data, userId);
+				toast.success('Topic & quiz created');
+			} else if (mode === 'edit' && initialData) {
+				await updateQuiz(initialData.id, data, userId);
+				toast.success('Quiz updated');
+			}
+			router.push(`/topics/${data.associatedTopicId}`);
 		} catch (err: any) {
 			toast.error(err.message ?? 'Something went wrong');
 		} finally {
 			setIsPending(false);
 		}
-	};		
-
-	console.log('formState', formState.errors);
+	};
 
 	return (
 		<Form {...form}>
@@ -92,38 +110,38 @@ export const CreateTopicQuizForm = ({
 				onSubmit={handleSubmit(onSubmit)}
 				className="mx-auto flex max-w-4xl flex-col gap-8"
 			>
-				<section className="space-y-3">
-					<FormField
-						control={control}
-						name="associatedTopicId"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Associated topic</FormLabel>
-
-								<Select
-									onValueChange={field.onChange}
-									defaultValue={field.value}
-									disabled={topics.length === 0}
-								>
-									<FormControl>
-										<SelectTrigger className="w-full max-w-sm">
-											<SelectValue placeholder="Choose a topic…" />
-										</SelectTrigger>
-									</FormControl>
-
-									<SelectContent>
-										{topics.map(t => (
-											<SelectItem key={t.id} value={t.id}>
-												{t.title}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-				</section>
+				{mode === 'create' && (
+					<section className="space-y-3">
+						<FormField
+							control={control}
+							name="associatedTopicId"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Associated topic</FormLabel>
+									<Select
+										onValueChange={field.onChange}
+										defaultValue={field.value}
+										disabled={topics.length === 0}
+									>
+										<FormControl>
+											<SelectTrigger className="w-full max-w-sm">
+												<SelectValue placeholder="Choose a topic…" />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{topics.map(t => (
+												<SelectItem key={t.id} value={t.id}>
+													{t.title}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</section>
+				)}
 
 				<section className="space-y-3">
 					<h2 className="text-xl font-semibold">Quiz details</h2>
@@ -176,7 +194,7 @@ export const CreateTopicQuizForm = ({
 
 					{fields.map((f, idx) => {
 						const name = `questions.${idx}` as const;
-						const type = form.watch(`${name}.type`);
+						const type = watch(`${name}.type`);
 
 						return (
 							<div key={f.id} className="space-y-3 rounded border p-4">
@@ -224,7 +242,13 @@ export const CreateTopicQuizForm = ({
 				</section>
 
 				<Button type="submit" disabled={isPending}>
-					{isPending ? 'Saving…' : 'Create'}
+					{isPending
+						? mode === 'create'
+							? 'Saving…'
+							: 'Updating…'
+						: mode === 'create'
+							? 'Create'
+							: 'Update'}
 				</Button>
 			</form>
 		</Form>

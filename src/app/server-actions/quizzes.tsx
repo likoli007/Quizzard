@@ -2,6 +2,7 @@
 
 //import { v4 as uuidv4 } from 'uuid';
 import { v4 as uuid } from 'uuid';
+import { eq } from 'drizzle-orm';
 
 import { db } from '@/db';
 import {
@@ -10,7 +11,10 @@ import {
 } from '@/db/schema/questions';
 import { quizKeyEntries } from '@/db/schema/quizKeys';
 import { quizzes } from '@/db/schema/quizzes';
-import { createQuizSchema } from '@/modules/quiz/components/create-quiz-form/schema';
+import {
+	createQuizSchema,
+	type CreateTopicQuizInput
+} from '@/modules/quiz/components/create-quiz-form/schema';
 
 export const createTopicWithQuiz = async (
 	rawData: unknown,
@@ -67,5 +71,73 @@ export const createTopicWithQuiz = async (
 		}
 
 		return { quizId };
+	});
+};
+
+export const deleteQuiz = async (quizId: string): Promise<void> => {
+	await db.transaction(async tx => {
+		await tx.update(quizzes).set({ deleted: 1 }).where(eq(quizzes.id, quizId));
+	});
+
+	//revalidatePath(); TODO: later?
+};
+
+export const updateQuiz = async (
+	quizId: string,
+	data: CreateTopicQuizInput,
+	userId: string
+): Promise<void> => {
+	await db.transaction(async tx => {
+		await tx
+			.update(quizzes)
+			.set({
+				title: data.quizTitle,
+				description: data.quizDescription,
+				timeLimit: data.timeLimit,
+				updatedAt: new Date().toString()
+			})
+			.where(eq(quizzes.id, quizId));
+
+		await tx
+			.delete(trueFalseQuestions)
+			.where(eq(trueFalseQuestions.quizId, quizId));
+		await tx
+			.delete(multipleChoiceQuestions)
+			.where(eq(multipleChoiceQuestions.quizId, quizId));
+
+		for (const [i, q] of data.questions.entries()) {
+			const questionId = uuid();
+
+			if (q.type === 'TF') {
+				await tx.insert(trueFalseQuestions).values({
+					id: questionId,
+					quizId,
+					questionText: q.questionText,
+					order: i
+				});
+
+				await tx.insert(quizKeyEntries).values({
+					id: uuid(),
+					quizId,
+					questionId,
+					answerValue: JSON.stringify(q.answer)
+				});
+			} else {
+				await tx.insert(multipleChoiceQuestions).values({
+					id: questionId,
+					quizId,
+					questionText: q.questionText,
+					order: i,
+					options: q.options
+				});
+
+				await tx.insert(quizKeyEntries).values({
+					id: uuid(),
+					quizId,
+					questionId,
+					answerValue: JSON.stringify(q.answer)
+				});
+			}
+		}
 	});
 };

@@ -48,6 +48,59 @@ export async function getAllQuizzes() {
     .orderBy(desc(quizzes.createdAt));
 }
 
+export async function getQuizDetailsWithoutAttempts(quizId: string, userId: string) {
+	const quizRow = await db
+		.select({
+			id: quizzes.id,
+			title: quizzes.title,
+			description: quizzes.description,
+			timeLimit: quizzes.timeLimit,
+			topicId: quizzes.topicId,
+			userId: quizzes.userId,
+			createdAt: quizzes.createdAt,
+			updatedAt: quizzes.updatedAt
+		})
+		.from(quizzes)
+		.where(and(eq(quizzes.userId, userId), eq(quizzes.id, quizId)))
+		.limit(1)
+		.get();
+
+	if (!quizRow) return;
+
+	const tfQuestions = await db
+		.select({
+			id: trueFalseQuestions.id,
+			quizId: trueFalseQuestions.quizId,
+			questionText: trueFalseQuestions.questionText,
+			order: trueFalseQuestions.order,
+			createdAt: trueFalseQuestions.createdAt,
+			updatedAt: trueFalseQuestions.updatedAt
+		})
+		.from(trueFalseQuestions)
+		.where(eq(trueFalseQuestions.quizId, quizId))
+		.orderBy(trueFalseQuestions.order);
+
+	const mcQuestions = await db
+		.select({
+			id: multipleChoiceQuestions.id,
+			quizId: multipleChoiceQuestions.quizId,
+			questionText: multipleChoiceQuestions.questionText,
+			order: multipleChoiceQuestions.order,
+			options: multipleChoiceQuestions.options,
+			createdAt: multipleChoiceQuestions.createdAt,
+			updatedAt: multipleChoiceQuestions.updatedAt
+		})
+		.from(multipleChoiceQuestions)
+		.where(eq(multipleChoiceQuestions.quizId, quizId))
+		.orderBy(multipleChoiceQuestions.order);
+
+	return {
+		...quizRow,
+		trueFalseQuestions: tfQuestions,
+		multipleChoiceQuestions: mcQuestions
+	};
+}
+
 export const getQuizWithDetails = async (
 	quizId: string
 	): Promise<QuizWithDetails | undefined> => {
