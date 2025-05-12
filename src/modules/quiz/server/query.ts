@@ -28,25 +28,29 @@ export async function getTopicQuizzes(topicId: string) {
 }
 
 export async function getAllQuizzes() {
-  return db
-    .select({
-      id: quizzes.id,
-      title: quizzes.title,
-      description: quizzes.description,
-      timeLimit: quizzes.timeLimit,
-      topicId: quizzes.topicId,
-      trueFalseCount: sql<number>`(
-        SELECT COUNT(*) FROM ${trueFalseQuestions}
-        WHERE ${trueFalseQuestions.quizId} = ${quizzes.id}
-      )`,
-      multipleChoiceCount: sql<number>`(
-        SELECT COUNT(*) FROM ${multipleChoiceQuestions}
-        WHERE ${multipleChoiceQuestions.quizId} = ${quizzes.id}
-      )`
-    })
-    .from(quizzes)
-    .where(sql`${quizzes.deleted} = 0`)
-    .orderBy(desc(quizzes.createdAt));
+	const allQuizzes = await db.select().from(quizzes).where(sql`${quizzes.deleted} = 0`);
+  
+	const result = await Promise.all(
+	  allQuizzes.map(async quiz => {
+		const [tfCountResult] = await db
+		  .select({ count: sql<number>`count(*)` })
+		  .from(trueFalseQuestions)
+		  .where(sql`${trueFalseQuestions.quizId} = ${quiz.id}`);
+  
+		const [mcCountResult] = await db
+		  .select({ count: sql<number>`count(*)` })
+		  .from(multipleChoiceQuestions)
+		  .where(sql`${multipleChoiceQuestions.quizId} = ${quiz.id}`);
+  
+		return {
+		  ...quiz,
+		  trueFalseCount: tfCountResult.count,
+		  multipleChoiceCount: mcCountResult.count
+		};
+	  })
+	);
+  
+	return result;
 }
 
 export async function getQuizDetailsWithoutAttempts(quizId: string, userId: string) {
