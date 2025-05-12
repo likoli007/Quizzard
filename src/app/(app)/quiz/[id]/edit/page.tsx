@@ -11,13 +11,10 @@ const EditQuizPage = async ({ params }: { params: { id: string } }) => {
 		redirect('/auth/login');
 	}
 
-	const quiz = await getQuizDetailsWithoutAttempts(
-		params.id,
-		session.user!.id as string
-	);
+	const quiz = await getQuizDetailsWithoutAttempts(params.id, session.user!.id);
 	if (!quiz) notFound();
 
-	const topics = await getTopicsByUserId(session.user!.id as string);
+	const topics = await getTopicsByUserId(session.user!.id);
 
 	const tfQuestions = quiz.trueFalseQuestions?.map(q => ({
 		type: 'TF' as const,

@@ -11,7 +11,7 @@ const FavoritesPage = async () => {
 		redirect('/auth/login');
 	}
 
-	const userId = session.user.id as string;
+	const userId = session.user.id;
 
 	const allTopics = await getFavoriteTopics(userId);
 
