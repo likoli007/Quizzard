@@ -2,12 +2,14 @@
 
 import { v4 as uuid } from 'uuid';
 import { revalidatePath } from 'next/cache';
+import { eq } from 'drizzle-orm';
 
 import { db } from '@/db';
 import { topics } from '@/db/schema/topics';
-import { createTopicValidator, updateTopicValidator } from './validators';
-import { eq } from 'drizzle-orm';
 import { quizzes } from '@/db/schema/quizzes';
+import { favorites } from '@/db/schema/favorites';
+
+import { createTopicValidator, updateTopicValidator } from './validators';
 
 const createTopic = async (raw: unknown) => {
 	const data = createTopicValidator.parse(raw);
@@ -52,3 +54,29 @@ export async function deleteTopic(topicId: string) {
 
 	await db.delete(topics).where(eq(topics.id, topicId));
 }
+
+export const addFavorite = async (userId: string, topicId: string) => {
+	await db
+		.insert(favorites)
+		.values({ id: uuid(), userId, topicId })
+		.onConflictDoNothing();
+
+	revalidatePath('/topics');
+};
+
+export const removeFavorite = async (userId: string, topicId: string) => {
+	await db
+		.delete(favorites)
+		.where(eq(favorites.userId, userId) && eq(favorites.topicId, topicId));
+
+	revalidatePath('/topics');
+};
+
+export const getFavoriteTopicIds = async (userId: string) => {
+	const rows = await db
+		.select({ topicId: favorites.topicId })
+		.from(favorites)
+		.where(eq(favorites.userId, userId));
+
+	return new Set(rows.map(r => r.topicId));
+};
