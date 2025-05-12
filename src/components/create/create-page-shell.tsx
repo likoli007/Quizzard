@@ -4,7 +4,7 @@ import { FileText, HelpCircle } from 'lucide-react';
 import { useState } from 'react';
 
 import { CreateTopicForm } from '@/modules/topic/create-form/topic-create-form';
-import { CreateTopicQuizForm } from '@/modules/quiz/components/create-quiz-form/create-quiz-form';
+import { TopicQuizForm } from '@/modules/quiz/components/create-quiz-form/create-quiz-form';
 import { type Topic } from '@/db/schema/topics';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
@@ -53,7 +53,7 @@ export const CreatePageShell = ({
 						title="Create a New Topic"
 						description="Fill in the details below to create a new educational topic."
 					>
-						<CreateTopicForm userId="temp" />
+						<CreateTopicForm userId={userId} />
 					</CreateTabsCard>
 				</TabsContent>
 
@@ -62,7 +62,7 @@ export const CreatePageShell = ({
 						title="Create a New Quiz"
 						description="Create a quiz to test knowledge on a specific topic."
 					>
-						<CreateTopicQuizForm userId="temp" topics={topics} />
+						<TopicQuizForm userId={userId} topics={topics} mode="create" />
 					</CreateTabsCard>
 				</TabsContent>
 			</Tabs>
