@@ -1,3 +1,5 @@
+import { Quiz } from '@/db/schema/quizzes';
+
 export type QuizForAttempt = {
 	id: string;
 	title: string;
@@ -72,4 +74,9 @@ export type AnswerKey = Record<string, boolean | number>;
 
 export type QuizWithDetailsAndAnswers = QuizWithDetails & {
 	answers: AnswerKey;
+};
+
+export type QuizWithQuestionsCount = Quiz & {
+	tfCount: number;
+	mcCount: number;
 };

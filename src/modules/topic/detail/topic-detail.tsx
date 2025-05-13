@@ -2,17 +2,16 @@
 
 import { useSession } from 'next-auth/react';
 
-import type { Topic } from '@/db/schema/topics';
 import { BackButton } from '@/components/common/back-button';
 
-import { type TopicQuizPreview } from '../types';
+import { TopicWithAuthor, type TopicQuizPreview } from '../types';
 
 import TopicDetailHeader from './header/topic-detail-header';
 import TopicDetailFooter from './footer/topic-detail-footer';
-import { QuizCard } from './quiz-card/quiz-card';
+import { TopicDetailQuizCard } from './quiz-card/topic-detail-quiz-card';
 
 type TopicDetailProps = {
-	topic: Topic;
+	topic: TopicWithAuthor;
 	quizzes: TopicQuizPreview[];
 };
 const TopicDetail = ({ topic, quizzes }: TopicDetailProps) => {
@@ -34,7 +33,7 @@ const TopicDetail = ({ topic, quizzes }: TopicDetailProps) => {
 			<section className="space-y-6">
 				{quizzes.length > 0 ? (
 					quizzes.map(quiz => (
-						<QuizCard
+						<TopicDetailQuizCard
 							key={quiz.id}
 							quiz={quiz}
 							isOwner={isOwner}
