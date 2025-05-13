@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, XCircle, MinusCircle } from 'lucide-react';
 import { QuizWithDetails } from '@/modules/quiz/server/types';
+import { auth } from '@/auth';
 
 interface ResultsPageProps {
   params: Promise<{ id: string }>;
@@ -23,7 +24,12 @@ interface ResultsPageProps {
 
 export default async function QuizResultsPage({ params }: ResultsPageProps) {
   const { id: quizId } = await params;
-  const userId = 'temp';
+
+  const session = await auth();
+  if (!session?.user?.id) {
+    redirect('auth/login');
+  }
+  const userId = session.user.id;
 
   const quiz: QuizWithDetails | undefined = await getQuizWithDetails(quizId);
   if (!quiz) return notFound();

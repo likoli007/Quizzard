@@ -11,9 +11,9 @@ import { QuizWithDetails } from '../server/types';
 import { createQuizAttempt } from '@/app/server-actions/quiz/attempt';
 import { submitQuizAnswer } from '@/app/server-actions/quiz/answer';
 
-type Props = { quiz: QuizWithDetails };
+type Props = { quiz: QuizWithDetails; userId: string };
 
-export default function QuizPageClient({ quiz }: Props) {
+export default function QuizPageClient({ quiz, userId }: Props) {
   const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, boolean | number>>({});
   const [timeLeft, setTimeLeft] = useState<number>(quiz.timeLimit);
@@ -33,7 +33,7 @@ export default function QuizPageClient({ quiz }: Props) {
   const handleSubmit = async () => {
     const { attemptId } = await createQuizAttempt({
       quizId: quiz.id,
-      userId: 'temp'
+      userId: userId
     });
   
     await Promise.all(
