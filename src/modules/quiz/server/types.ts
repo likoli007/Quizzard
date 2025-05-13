@@ -1,3 +1,33 @@
+export type QuizForAttempt = {
+	id: string;
+	title: string;
+	description: string | null;
+	timeLimit: number;
+	topicId: string;
+	userId: string | null;
+	createdAt: string;
+	updatedAt: string;
+
+	trueFalseQuestions?: Array<{
+		id: string;
+		quizId: string;
+		questionText: string;
+		order: number;
+		createdAt: string;
+		updatedAt: string;
+	}>;
+
+	multipleChoiceQuestions?: Array<{
+		id: string;
+		quizId: string;
+		questionText: string;
+		order: number;
+		options: string[];
+		createdAt: string;
+		updatedAt: string;
+	}>;
+};
+
 export type QuizWithDetails = {
 	id: string;
 	title: string;

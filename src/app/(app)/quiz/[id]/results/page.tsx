@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { db } from '@/db';
 import { eq } from 'drizzle-orm';
+import { CheckCircle, XCircle, MinusCircle } from 'lucide-react';
+
+import { db } from '@/db';
 import { quizAnswers } from '@/db/schema/quizAnswers';
 import { getQuizWithDetailsAndAnswers } from '@/modules/quiz/server/query';
 import { PageHeading } from '@/components/common/page-heading';
@@ -14,22 +16,16 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, MinusCircle } from 'lucide-react';
-import { QuizWithDetailsAndAnswers } from '@/modules/quiz/server/types';
+import { type QuizWithDetailsAndAnswers } from '@/modules/quiz/server/types';
 import { auth } from '@/auth';
 
-interface ResultsPageProps {
-	params: Promise<{ id: string }>;
-}
+type ResultsPageProps = { params: { id: string } };
 
-export default async function QuizResultsPage({ params }: ResultsPageProps) {
-	const { id: quizId } = await params;
+const QuizResultsPage = async ({ params }: ResultsPageProps) => {
+	const quizId = (await params).id;
 
 	const session = await auth();
-	if (!session?.user?.id) {
-		redirect('auth/login');
-	}
-	const userId = session.user.id;
+	if (!session?.user?.id) redirect('/auth/login');
 
 	const quiz: QuizWithDetailsAndAnswers | undefined =
 		await getQuizWithDetailsAndAnswers(quizId);
@@ -69,7 +65,7 @@ export default async function QuizResultsPage({ params }: ResultsPageProps) {
 	const tfQs = quiz.trueFalseQuestions ?? [];
 	const mcQs = quiz.multipleChoiceQuestions ?? [];
 	const totalQuestions = tfQs.length + mcQs.length;
-	const correctCount = rows.filter(r => r.isCorrect).length;
+	const correctCount = quiz.attempts[0].score;
 	const pct = totalQuestions
 		? Math.round((correctCount / totalQuestions) * 100)
 		: 0;
@@ -144,6 +140,7 @@ export default async function QuizResultsPage({ params }: ResultsPageProps) {
 					const ans = answerMap[q.id] ?? { selected: -1, isCorrect: false };
 					const correctIndex = (quiz.answers?.[q.id] as number) ?? -1;
 
+					//TODO: this is bad, perhaps options should not be a string
 					let opts: string[] = [];
 					const raw = q.options as unknown;
 
@@ -207,4 +204,6 @@ export default async function QuizResultsPage({ params }: ResultsPageProps) {
 			</CardFooter>
 		</div>
 	);
-}
+};
+
+export default QuizResultsPage;

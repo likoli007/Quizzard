@@ -11,9 +11,9 @@ import { cn } from '@/lib/utils';
 import { createQuizAttempt } from '@/app/server-actions/quiz/attempt';
 import { submitQuizAnswer } from '@/app/server-actions/quiz/answer';
 
-import { type QuizWithDetails } from '../server/types';
+import { type QuizForAttempt } from '../server/types';
 
-type Props = { quiz: QuizWithDetails; userId: string };
+type Props = { quiz: QuizForAttempt; userId: string };
 
 type FlatQuestion =
 	| {
@@ -80,7 +80,13 @@ const QuizPageClient: React.FC<Props> = ({ quiz, userId }) => {
 	const handleSubmit = async () => {
 		const { attemptId } = await createQuizAttempt({
 			quizId: quiz.id,
-			userId
+			userId,
+			timeTaken: quiz.timeLimit - timeLeft,
+			answers: Object.entries(answers).map(([questionId, answer]) => ({
+				//TODO: ugly, turn answers into something else
+				questionId,
+				answer
+			}))
 		});
 
 		await Promise.all(
