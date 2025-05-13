@@ -79,15 +79,22 @@ const QuizPageClient: React.FC<Props> = ({ quiz, userId }) => {
 		setAnswers(a => ({ ...a, [questionId]: value }));
 
 	const handleSubmit = async () => {
+		//TODO: ugly, turn answers into something else
+		const allAnswers = questions.map(q => {
+			const existing = answers[q.id];
+
+			if (existing !== undefined) {
+				return { questionId: q.id, answer: existing };
+			}
+
+			return { questionId: q.id, answer: null };
+		});
+
 		const { attemptId } = await createQuizAttempt({
 			quizId: quiz.id,
 			userId,
 			timeTaken: quiz.timeLimit - timeLeft,
-			answers: Object.entries(answers).map(([questionId, answer]) => ({
-				//TODO: ugly, turn answers into something else
-				questionId,
-				answer
-			}))
+			answers: allAnswers
 		});
 
 		router.push(`/quiz/${quiz.id}/results`);
@@ -193,9 +200,7 @@ const QuizPageClient: React.FC<Props> = ({ quiz, userId }) => {
 					Next
 				</Button>
 			) : (
-				<Button type="submit" disabled={answered < total}>
-					Submit Quiz
-				</Button>
+				<Button type="submit">Submit Quiz</Button>
 			)}
 		</div>
 	);

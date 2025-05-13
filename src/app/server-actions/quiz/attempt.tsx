@@ -14,7 +14,7 @@ type RawInput = {
 	quizId: string;
 	userId: string;
 	timeTaken: number;
-	answers: { questionId: string; answer: boolean | number }[];
+	answers: { questionId: string; answer: boolean | number | null }[];
 };
 
 export const createQuizAttempt = async (
@@ -49,12 +49,21 @@ export const createQuizAttempt = async (
 		if (isCorrect) {
 			correct += 1;
 		}
+
+		const selectedAnswer =
+			answer === null
+				? null
+				: typeof answer === 'boolean'
+					? answer
+						? 1
+						: 0
+					: Number(answer);
+
 		answerRows.push({
 			id: uuid(),
 			quizAttemptId: '',
 			questionId,
-			selectedAnswer:
-				typeof answer === 'boolean' ? (answer ? 1 : 0) : Number(answer),
+			selectedAnswer,
 			isCorrect
 		});
 	});

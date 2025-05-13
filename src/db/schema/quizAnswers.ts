@@ -11,7 +11,7 @@ export const quizAnswers = sqliteTable('quiz_answers', {
 		.notNull()
 		.references(() => quizAttempts.id),
 	questionId: text('question_id').notNull(),
-	selectedAnswer: integer('answer').notNull(),
+	selectedAnswer: integer('answer'),
 	isCorrect: integer('is_correct', { mode: 'boolean' })
 		.notNull()
 		.default(false),

@@ -166,7 +166,8 @@ const QuizResultsPage = async ({ params }: ResultsPageProps) => {
 								return [];
 							})();
 
-							const userAnswer = opts[ans.selected];
+							const userAnswer =
+								ans.selected !== null ? opts[ans.selected] : 'No Answer';
 							const correctAnswer = opts[correctIdx];
 
 							return (
