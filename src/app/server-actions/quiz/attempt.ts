@@ -37,10 +37,7 @@ export const createQuizAttempt = async (
 
 	raw.answers.forEach(({ questionId, answer }) => {
 		const correctAnswer = keyMap.get(questionId);
-		const answerNum = typeof answer === 'boolean' ? (answer ? 1 : 0) : answer;
-		const isCorrect = answerNum === correctAnswer;
-
-		console.log(answerNum, correctAnswer, isCorrect);
+		const isCorrect = answer === correctAnswer;
 
 		if (isCorrect) {
 			correct += 1;

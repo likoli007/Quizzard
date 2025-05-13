@@ -22,7 +22,7 @@ import { auth } from '@/auth';
 type ResultsPageProps = { params: { id: string } };
 
 const QuizResultsPage = async ({ params }: ResultsPageProps) => {
-	const quizId = params.id;
+	const quizId = (await params).id;
 
 	const session = await auth();
 	if (!session?.user?.id) redirect('/auth/login');
@@ -65,7 +65,7 @@ const QuizResultsPage = async ({ params }: ResultsPageProps) => {
 	const tfQs = quiz.trueFalseQuestions ?? [];
 	const mcQs = quiz.multipleChoiceQuestions ?? [];
 	const totalQuestions = tfQs.length + mcQs.length;
-	const correctCount = rows.filter(r => r.isCorrect).length;
+	const correctCount = quiz.attempts[0].score;
 	const pct = totalQuestions
 		? Math.round((correctCount / totalQuestions) * 100)
 		: 0;
