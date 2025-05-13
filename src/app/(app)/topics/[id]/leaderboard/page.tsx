@@ -1,10 +1,10 @@
 'use server';
 
 import { PageHeading } from '@/components/common/page-heading';
-import StickyLeaderboard from '@/components/leaderboard/StickyLeaderboard';
 import { getTopic } from '@/modules/topic/server/query';
 import { BackButton } from '@/components/common/back-button';
-import { getUsersByTopicPoints } from '@/app/server-actions/leaderboard';
+import { getUsersByTopicPoints } from '@/modules/leaderboard/server/query';
+import StickyLeaderboard from '@/modules/leaderboard/components/StickyLeaderboard';
 
 type LeaderboardPageProps = {
 	params: Promise<{ id: string }>;

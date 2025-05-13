@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { PageHeading } from '@/components/common/page-heading';
 import { Button } from '@/components/ui/button';
 import { getTopics } from '@/modules/topic/server/query';
-import { TopicCard } from '@/modules/topic/card/topic-card';
+import { TopicCard } from '@/modules/topic/components/card/topic-card';
 import { auth } from '@/auth';
 import { getFavoriteTopicIds } from '@/app/server-actions/topics/topics';
 

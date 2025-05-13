@@ -1,10 +1,4 @@
-export type Topic = {
-	id: string;
-	title: string;
-	description?: string | null;
-	content: string;
-	category: string;
-};
+import { Topic } from '@/db/schema/topics';
 
 export type TopicQuizPreview = {
 	id: string;
@@ -13,4 +7,8 @@ export type TopicQuizPreview = {
 	timeLimit: number;
 	createdAt: string;
 	updatedAt: string;
+};
+
+export type TopicWithAuthor = Topic & {
+	authorName: string | null;
 };

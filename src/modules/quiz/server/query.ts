@@ -13,7 +13,8 @@ import { quizKeyEntries } from '@/db/schema/quizKeys';
 import {
 	type QuizForAttempt,
 	type QuizWithDetailsAndAnswers,
-	type QuizWithDetails
+	type QuizWithDetails,
+	QuizWithQuestionsCount
 } from './types';
 
 export const getTopicQuizzes = async (topicId: string) =>
@@ -30,7 +31,7 @@ export const getTopicQuizzes = async (topicId: string) =>
 		.where(and(eq(quizzes.topicId, topicId), eq(quizzes.deleted, 0)))
 		.orderBy(desc(quizzes.createdAt));
 
-export const getAllQuizzes = async () => {
+export const getAllQuizzes = async (): Promise<QuizWithQuestionsCount[]> => {
 	const allQuizzes = await db
 		.select()
 		.from(quizzes)
@@ -50,8 +51,8 @@ export const getAllQuizzes = async () => {
 
 			return {
 				...quiz,
-				trueFalseCount: tfCountResult.count,
-				multipleChoiceCount: mcCountResult.count
+				tfCount: tfCountResult.count,
+				mcCount: mcCountResult.count
 			};
 		})
 	);

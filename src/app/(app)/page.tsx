@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { HomeCard } from '@/modules/home/card/home-card';
+import { HomeCard } from '@/modules/home/components/card/home-card';
 import { homeCards } from '@/modules/home/home-cards';
 import { Button } from '@/components/ui/button';
 

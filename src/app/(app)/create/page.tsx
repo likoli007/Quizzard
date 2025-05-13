@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 
 import { getTopicsByUserId } from '@/modules/topic/server/query';
-import { CreatePageShell } from '@/components/create/create-page-shell';
 import { auth } from '@/auth';
+import { CreatePageShell } from '@/modules/create/create-page-shell';
 
 const CreatePage = async () => {
 	const session = await auth();

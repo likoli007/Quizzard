@@ -9,15 +9,19 @@ import { Card, CardContent } from '@/components/ui/card';
 import { DeleteButton } from '@/components/common/delete-button';
 import { deleteQuiz } from '@/app/server-actions/quizzes';
 
-import { type TopicQuizPreview } from '../../types';
+import { type TopicQuizPreview } from '../../../types';
 
-type QuizCardProps = {
+type TopicDetailQuizCardProps = {
 	quiz: TopicQuizPreview;
 	isOwner: boolean;
 	topicId: string;
 };
 
-export const QuizCard = ({ quiz, isOwner, topicId }: QuizCardProps) => {
+export const TopicDetailQuizCard = ({
+	quiz,
+	isOwner,
+	topicId
+}: TopicDetailQuizCardProps) => {
 	const [isPending, start] = useTransition();
 	const router = useRouter();
 

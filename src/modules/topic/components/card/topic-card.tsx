@@ -35,11 +35,11 @@ type TopicCardProps = {
 	isInitiallyFavorite: boolean;
 };
 
-export const TopicCard: React.FC<TopicCardProps> = ({
+export const TopicCard = ({
 	topic,
 	userId,
 	isInitiallyFavorite
-}) => {
+}: TopicCardProps) => {
 	const [isFavorite, setIsFavorite] = useState(isInitiallyFavorite);
 	const [isPending, start] = useTransition();
 
