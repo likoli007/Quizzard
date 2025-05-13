@@ -64,7 +64,7 @@ const QuizResultsPage = async ({ params }: ResultsPageProps) => {
 
 	const tfQs = quiz.trueFalseQuestions ?? [];
 	const mcQs = quiz.multipleChoiceQuestions ?? [];
-	const totalQuestions = tfQs.length + mcQs.length;
+	const totalQuestions = rows.length;
 	const correctCount = quiz.attempts[0].score;
 	const pct = totalQuestions
 		? Math.round((correctCount / totalQuestions) * 100)
