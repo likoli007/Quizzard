@@ -9,7 +9,6 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { createQuizAttempt } from '@/app/server-actions/quiz/attempt';
-import { submitQuizAnswer } from '@/app/server-actions/quiz/answer';
 
 import { type QuizForAttempt } from '../server/types';
 
@@ -88,12 +87,6 @@ const QuizPageClient: React.FC<Props> = ({ quiz, userId }) => {
 				answer
 			}))
 		});
-
-		await Promise.all(
-			Object.entries(answers).map(([questionId, answer]) =>
-				submitQuizAnswer({ quizId: quiz.id, attemptId, questionId, answer })
-			)
-		);
 
 		router.push(`/quiz/${quiz.id}/results`);
 	};
