@@ -85,113 +85,134 @@ const QuizResultsPage = async ({ params }: ResultsPageProps) => {
 			</div>
 
 			<div className="space-y-6">
-				{tfQs.map((q, i) => {
-					const ans = answerMap[q.id] ?? { selected: -1, isCorrect: false };
-					const correctIndex = quiz.answers?.[q.id] === true ? 1 : 0;
+				{[
+					...tfQs.map(q => ({ type: 'TF' as const, q })),
+					...mcQs.map(q => ({ type: 'MC' as const, q }))
+				]
+					.sort((a, b) => a.q.order - b.q.order) // ascending order
+					.map((item, idx) => {
+						const q = item.q;
+						const ans = answerMap[q.id] ?? { selected: -1, isCorrect: false };
 
-					return (
-						<Card key={q.id}>
-							<CardHeader>
-								<div className="flex items-center justify-between">
-									<CardTitle>{`Q${i + 1}. ${q.questionText}`}</CardTitle>
-									{ans.selected !== -1 ? (
-										ans.isCorrect ? (
-											<CheckCircle className="text-green-500" />
-										) : (
-											<XCircle className="text-red-500" />
-										)
-									) : (
-										<MinusCircle className="text-gray-400" />
-									)}
-								</div>
-							</CardHeader>
-							<CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-								<div>
-									<p className="mb-1 text-sm font-semibold">Your Answer</p>
-									<Badge
-										variant={
-											ans.selected !== -1
-												? ans.isCorrect
-													? 'default'
-													: 'secondary'
-												: 'outline'
-										}
-									>
-										{ans.selected === 1
-											? 'True'
-											: ans.selected === 0
-												? 'False'
-												: 'No Answer'}
-									</Badge>
-								</div>
-								<div>
-									<p className="mb-1 text-sm font-semibold">Correct Answer</p>
-									<Badge variant="default">
-										{correctIndex === 1 ? 'True' : 'False'}
-									</Badge>
-								</div>
-							</CardContent>
-						</Card>
-					);
-				})}
+						/* ───── TRUE / FALSE ───── */
+						if (item.type === 'TF') {
+							const correctIdx = quiz.answers?.[q.id] === true ? 1 : 0;
 
-				{mcQs.map((q, idx) => {
-					const num = tfQs.length + idx + 1;
-					const ans = answerMap[q.id] ?? { selected: -1, isCorrect: false };
-					const correctIndex = (quiz.answers?.[q.id] as number) ?? -1;
+							return (
+								<Card key={q.id}>
+									<CardHeader>
+										<div className="flex items-center justify-between">
+											<CardTitle>{`Q${idx + 1}. ${q.questionText}`}</CardTitle>
+											{ans.selected !== -1 ? (
+												ans.isCorrect ? (
+													<CheckCircle className="text-green-500" />
+												) : (
+													<XCircle className="text-red-500" />
+												)
+											) : (
+												<MinusCircle className="text-gray-400" />
+											)}
+										</div>
+									</CardHeader>
 
-					//TODO: this is bad, perhaps options should not be a string
-					let opts: string[] = [];
-					const raw = q.options as unknown;
+									<CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+										<div>
+											<p className="mb-1 text-sm font-semibold">Your Answer</p>
+											<Badge
+												variant={
+													ans.selected !== -1
+														? ans.isCorrect
+															? 'default'
+															: 'secondary'
+														: 'outline'
+												}
+											>
+												{ans.selected === 1
+													? 'True'
+													: ans.selected === 0
+														? 'False'
+														: 'No Answer'}
+											</Badge>
+										</div>
+										<div>
+											<p className="mb-1 text-sm font-semibold">
+												Correct Answer
+											</p>
+											<Badge variant="default">
+												{correctIdx === 1 ? 'True' : 'False'}
+											</Badge>
+										</div>
+									</CardContent>
+								</Card>
+							);
+						}
 
-					if (Array.isArray(raw)) {
-						opts = raw;
-					} else if (typeof raw === 'string') {
-						opts = raw.split(',').map(s => s.trim());
-					}
+						if (item.type === 'MC') {
+							const correctIdx = (quiz.answers?.[q.id] as number) ?? -1;
+							const mc = q as (typeof mcQs)[number];
 
-					const userAnswer = opts[ans.selected] ?? 'No Answer';
-					const correctAnswer = opts[correctIndex] ?? 'Unknown';
+							const opts: string[] = (() => {
+								if (Array.isArray(mc.options)) return mc.options;
 
-					return (
-						<Card key={q.id}>
-							<CardHeader>
-								<div className="flex items-center justify-between">
-									<CardTitle>{`Q${num}. ${q.questionText}`}</CardTitle>
-									{ans.selected !== -1 ? (
-										ans.isCorrect ? (
-											<CheckCircle className="text-green-500" />
-										) : (
-											<XCircle className="text-red-500" />
-										)
-									) : (
-										<MinusCircle className="text-gray-400" />
-									)}
-								</div>
-							</CardHeader>
-							<CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-								<div>
-									<p className="mb-1 text-sm font-semibold">Your Answer</p>
-									<Badge
-										variant={
-											ans.selected !== -1
-												? ans.isCorrect
-													? 'default'
-													: 'secondary'
-												: 'outline'
-										}
-									>
-										{userAnswer}
-									</Badge>
-								</div>
-								<div>
-									<p className="mb-1 text-sm font-semibold">Correct Answer</p>
-									<Badge variant="default">{correctAnswer}</Badge>
-								</div>
-							</CardContent>
-						</Card>
-					);
-				})}
+								if (typeof mc.options === 'string') {
+									try {
+										return JSON.parse(mc.options);
+									} catch {
+										return (mc.options as string)
+											.split(',')
+											.map(s => s.trim())
+											.filter(Boolean);
+									}
+								}
+								return [];
+							})();
+
+							const userAnswer = opts[ans.selected];
+							const correctAnswer = opts[correctIdx];
+
+							return (
+								<Card key={q.id}>
+									<CardHeader>
+										<div className="flex items-center justify-between">
+											<CardTitle>{`Q${idx + 1}. ${q.questionText}`}</CardTitle>
+											{ans.selected !== -1 ? (
+												ans.isCorrect ? (
+													<CheckCircle className="text-green-500" />
+												) : (
+													<XCircle className="text-red-500" />
+												)
+											) : (
+												<MinusCircle className="text-gray-400" />
+											)}
+										</div>
+									</CardHeader>
+
+									<CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+										<div>
+											<p className="mb-1 text-sm font-semibold">Your Answer</p>
+											<Badge
+												variant={
+													ans.selected !== -1
+														? ans.isCorrect
+															? 'default'
+															: 'secondary'
+														: 'outline'
+												}
+											>
+												{userAnswer}
+											</Badge>
+										</div>
+										<div>
+											<p className="mb-1 text-sm font-semibold">
+												Correct Answer
+											</p>
+											<Badge variant="default">{correctAnswer}</Badge>
+										</div>
+									</CardContent>
+								</Card>
+							);
+						}
+					})}
 			</div>
 
 			<CardFooter className="flex gap-4">
