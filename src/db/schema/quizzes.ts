@@ -6,6 +6,7 @@ import { topics } from './topics';
 import { quizAttempts } from './quizAttempts';
 import { quizKeyEntries } from './quizKeys';
 import { multipleChoiceQuestions, trueFalseQuestions } from './questions';
+import { users } from './users';
 
 export const quizzes = sqliteTable('quizzes', {
 	id: text('id').primaryKey(),
@@ -15,7 +16,9 @@ export const quizzes = sqliteTable('quizzes', {
 	topicId: text('topic_id')
 		.notNull()
 		.references(() => topics.id),
-	userId: text('user_id'), //.notNull().references(() => users.id), // TODO: uncomment once users table is functional
+	userId: text('user_id')
+		.notNull()
+		.references(() => users.id),
 	createdAt: text('created_at')
 		.notNull()
 		.default(sql`CURRENT_TIMESTAMP`),

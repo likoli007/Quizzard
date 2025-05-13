@@ -1,13 +1,15 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 import { relations, sql } from 'drizzle-orm';
-import { z } from 'zod';
+import { type z } from 'zod';
+
+import {
+	type createTopicValidator,
+	type updateTopicValidator
+} from '@/app/server-actions/topics/validators';
 
 import { favorites } from './favorites';
 import { quizzes } from './quizzes';
-import {
-	createTopicValidator,
-	updateTopicValidator
-} from '@/app/server-actions/topics/validators';
+import { users } from './users';
 
 export const topics = sqliteTable('topics', {
 	id: text('id').primaryKey(),
@@ -16,7 +18,9 @@ export const topics = sqliteTable('topics', {
 	readTime: text('read_time').notNull(),
 	content: text('content').notNull(),
 	category: text('category').notNull(),
-	userId: text('user_id'), //.notNull().references(() => users.id), TODO: uncomment once users table is functional
+	userId: text('user_id')
+		.notNull()
+		.references(() => users.id),
 	deleted: integer('deleted')
 		.notNull()
 		.default(sql`0`),
@@ -32,7 +36,7 @@ export const topics = sqliteTable('topics', {
 });
 
 export const topicsRelations = relations(topics, ({ one, many }) => ({
-	//author: one(users, { fields: [topics.userId], references: [users.id] }), //TODO: uncomment once users table is functional
+	author: one(users, { fields: [topics.userId], references: [users.id] }),
 	favorites: many(favorites),
 	quizzes: many(quizzes)
 }));
