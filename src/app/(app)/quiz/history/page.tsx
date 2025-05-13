@@ -1,10 +1,18 @@
+import { redirect } from 'next/navigation';
+
 import { QuizHistoryStatisticCard } from '@/modules/quiz/components/history/statistic-card/quiz-history-statistic-card';
 import { getUserQuizzesWithDetails } from '@/modules/quiz/server/query';
 import { QuizHistoryCard } from '@/modules/quiz/components/history/card/quiz-history-card';
+import { auth } from '@/auth';
 
 const QuizHistoryPage = async () => {
-	// TODO: replace with actual authenticated user ID
-	const userId = 'temp';
+	const session = await auth();
+
+	if (!session?.user?.id) {
+		redirect('/auth/login');
+	}
+
+	const userId = session.user.id;
 	const queryLimit = 4;
 
 	const quizzes = await getUserQuizzesWithDetails(userId, queryLimit);
