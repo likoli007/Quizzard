@@ -1,6 +1,6 @@
 import { PageHeading } from '@/components/common/page-heading';
-import StickyLeaderboard from '@/components/leaderboard/StickyLeaderboard';
-import { getUsersByTotalPoints } from '@/app/server-actions/leaderboard';
+import StickyLeaderboard from '@/modules/leaderboard/components/StickyLeaderboard';
+import { getUsersByTotalPoints } from '@/modules/leaderboard/server/query';
 
 const LeaderboardPage = async () => {
 	const leaders = await getUsersByTotalPoints();
