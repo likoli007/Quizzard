@@ -1,26 +1,29 @@
 'use client';
 
 import Link from 'next/link';
-
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-
-import { type TopicQuizPreview } from '../../types';
-
-import { DeleteButton } from '@/components/common/delete-button';
-import { deleteQuiz } from '@/app/server-actions/quizzes';
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
-type QuizCardProps = { quiz: TopicQuizPreview; isOwner: boolean };
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { DeleteButton } from '@/components/common/delete-button';
+import { deleteQuiz } from '@/app/server-actions/quizzes';
 
-export const QuizCard = ({ quiz, isOwner }: QuizCardProps) => {
+import { type TopicQuizPreview } from '../../types';
+
+type QuizCardProps = {
+	quiz: TopicQuizPreview;
+	isOwner: boolean;
+	topicId: string;
+};
+
+export const QuizCard = ({ quiz, isOwner, topicId }: QuizCardProps) => {
 	const [isPending, start] = useTransition();
 	const router = useRouter();
 
 	const handleDelete = () =>
 		start(async () => {
-			await deleteQuiz(quiz.id);
+			await deleteQuiz(quiz.id, topicId);
 			router.refresh();
 		});
 

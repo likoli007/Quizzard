@@ -29,7 +29,7 @@ const createTopic = async (raw: unknown) => {
 };
 export default createTopic;
 
-export async function updateTopic(raw: unknown) {
+export const updateTopic = async (raw: unknown) => {
 	const { id, title, description, content, category, readTime } =
 		updateTopicValidator.parse(raw);
 
@@ -44,15 +44,14 @@ export async function updateTopic(raw: unknown) {
 			updatedAt: new Date().toISOString()
 		})
 		.where(eq(topics.id, id));
-}
 
-export async function deleteTopic(topicId: string) {
+	revalidatePath('/topics');
+	revalidatePath(`/topics/${id}`);
+};
+
+export const deleteTopic = async (topicId: string) => {
 	await db.transaction(async tx => {
 		await tx.delete(favorites).where(eq(favorites.topicId, topicId));
-		await tx
-			.update(favorites)
-			.set({ deleted: 1 })
-			.where(eq(favorites.topicId, topicId));
 
 		await tx
 			.update(quizzes)
@@ -67,7 +66,7 @@ export async function deleteTopic(topicId: string) {
 
 	revalidatePath('/topics');
 	revalidatePath(`/topics/${topicId}`);
-}
+};
 
 export const addFavorite = async (userId: string, topicId: string) => {
 	await db

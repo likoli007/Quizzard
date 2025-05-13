@@ -10,7 +10,7 @@ import QuizPageClient from '@/modules/quiz/components/QuizPageClient';
 type QuizPageProps = { params: { id: string } };
 
 const QuizPage = async ({ params }: QuizPageProps) => {
-	const { id } = params;
+	const { id } = await params;
 	const quiz = await getQuizForAttempt(id);
 	if (!quiz) return notFound();
 

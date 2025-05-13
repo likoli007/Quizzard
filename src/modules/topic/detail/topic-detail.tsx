@@ -34,7 +34,12 @@ const TopicDetail = ({ topic, quizzes }: TopicDetailProps) => {
 			<section className="space-y-6">
 				{quizzes.length > 0 ? (
 					quizzes.map(quiz => (
-						<QuizCard key={quiz.id} quiz={quiz} isOwner={isOwner} />
+						<QuizCard
+							key={quiz.id}
+							quiz={quiz}
+							isOwner={isOwner}
+							topicId={topic.id}
+						/>
 					))
 				) : (
 					<p className="text-muted-foreground text-center">

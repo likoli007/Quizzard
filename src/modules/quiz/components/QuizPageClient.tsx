@@ -9,7 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { createQuizAttempt } from '@/app/server-actions/quiz/attempt';
-import { submitQuizAnswer } from '@/app/server-actions/quiz/answer';
+import { formatTime } from '@/components/utils/time-formatting';
 
 import { type QuizForAttempt } from '../server/types';
 
@@ -64,6 +64,7 @@ const QuizPageClient: React.FC<Props> = ({ quiz, userId }) => {
 
 	const [answers, setAnswers] = useState<Record<string, boolean | number>>({});
 	const [timeLeft, setTimeLeft] = useState<number>(quiz.timeLimit);
+	const [index, setIndex] = useState(0);
 
 	useEffect(() => {
 		if (timeLeft <= 0) {
@@ -78,22 +79,23 @@ const QuizPageClient: React.FC<Props> = ({ quiz, userId }) => {
 		setAnswers(a => ({ ...a, [questionId]: value }));
 
 	const handleSubmit = async () => {
+		//TODO: ugly, turn answers into something else
+		const allAnswers = questions.map(q => {
+			const existing = answers[q.id];
+
+			if (existing !== undefined) {
+				return { questionId: q.id, answer: existing };
+			}
+
+			return { questionId: q.id, answer: null };
+		});
+
 		const { attemptId } = await createQuizAttempt({
 			quizId: quiz.id,
 			userId,
 			timeTaken: quiz.timeLimit - timeLeft,
-			answers: Object.entries(answers).map(([questionId, answer]) => ({
-				//TODO: ugly, turn answers into something else
-				questionId,
-				answer
-			}))
+			answers: allAnswers
 		});
-
-		await Promise.all(
-			Object.entries(answers).map(([questionId, answer]) =>
-				submitQuizAnswer({ quizId: quiz.id, attemptId, questionId, answer })
-			)
-		);
 
 		router.push(`/quiz/${quiz.id}/results`);
 	};
@@ -101,6 +103,8 @@ const QuizPageClient: React.FC<Props> = ({ quiz, userId }) => {
 	const total = questions.length;
 	const answered = Object.keys(answers).length;
 	const pctDone = total ? Math.round((answered / total) * 100) : 0;
+
+	const cur = questions[index];
 
 	const ChoiceCard = ({
 		onClick,
@@ -129,6 +133,78 @@ const QuizPageClient: React.FC<Props> = ({ quiz, userId }) => {
 		</button>
 	);
 
+	const renderQuestion = () => {
+		if (cur.type === 'TF') {
+			const selTrue = answers[cur.id] === true;
+			const selFalse = answers[cur.id] === false;
+
+			return (
+				<Card>
+					<CardHeader>
+						<CardTitle>{`Q${index + 1}. ${cur.text}`}</CardTitle>
+					</CardHeader>
+					<CardContent className="flex gap-3">
+						<ChoiceCard
+							fluid
+							selected={selTrue}
+							onClick={() => handleAnswer(cur.id, true)}
+						>
+							True
+						</ChoiceCard>
+						<ChoiceCard
+							fluid
+							selected={selFalse}
+							onClick={() => handleAnswer(cur.id, false)}
+						>
+							False
+						</ChoiceCard>
+					</CardContent>
+				</Card>
+			);
+		}
+
+		return (
+			<Card>
+				<CardHeader>
+					<CardTitle>{`Q${index + 1}. ${cur.text}`}</CardTitle>
+				</CardHeader>
+
+				<CardContent className="grid grid-cols-2 gap-3">
+					{cur.options.map((opt, i) => (
+						<ChoiceCard
+							key={i}
+							fluid
+							selected={answers[cur.id] === i}
+							onClick={() => handleAnswer(cur.id, i)}
+						>
+							{opt}
+						</ChoiceCard>
+					))}
+				</CardContent>
+			</Card>
+		);
+	};
+
+	const NavigationButtons = () => (
+		<div className="flex justify-between">
+			<Button
+				type="button"
+				disabled={index === 0}
+				onClick={() => setIndex(i => i - 1)}
+			>
+				Previous
+			</Button>
+
+			{index < total - 1 ? (
+				<Button type="button" onClick={() => setIndex(i => i + 1)}>
+					Next
+				</Button>
+			) : (
+				<Button type="submit">Submit Quiz</Button>
+			)}
+		</div>
+	);
+
 	return (
 		<form
 			onSubmit={e => {
@@ -138,67 +214,17 @@ const QuizPageClient: React.FC<Props> = ({ quiz, userId }) => {
 			className="space-y-8"
 		>
 			<div className="flex items-center justify-between">
-				<Badge variant="outline">⏱ {timeLeft}s</Badge>
+				<Badge variant="outline">⏱ {formatTime(timeLeft)}</Badge>
 				<Badge variant="outline">
 					{answered}/{total} answered
 				</Badge>
 			</div>
+
 			<Progress value={pctDone} />
 
-			{questions.map((q, idx) => {
-				if (q.type === 'TF') {
-					const selTrue = answers[q.id] === true;
-					const selFalse = answers[q.id] === false;
-					return (
-						<Card key={q.id}>
-							<CardHeader>
-								<CardTitle>{`Q${idx + 1}. ${q.text}`}</CardTitle>
-							</CardHeader>
-							<CardContent className="flex gap-3">
-								<ChoiceCard
-									fluid
-									selected={selTrue}
-									onClick={() => handleAnswer(q.id, true)}
-								>
-									True
-								</ChoiceCard>
-								<ChoiceCard
-									fluid
-									selected={selFalse}
-									onClick={() => handleAnswer(q.id, false)}
-								>
-									False
-								</ChoiceCard>
-							</CardContent>
-						</Card>
-					);
-				}
+			{renderQuestion()}
 
-				return (
-					<Card key={q.id}>
-						<CardHeader>
-							<CardTitle>{`Q${idx + 1}. ${q.text}`}</CardTitle>
-						</CardHeader>
-						<CardContent className="flex flex-wrap gap-3">
-							{q.options.map((opt, j) => (
-								<ChoiceCard
-									key={j}
-									selected={answers[q.id] === j}
-									onClick={() => handleAnswer(q.id, j)}
-								>
-									{opt}
-								</ChoiceCard>
-							))}
-						</CardContent>
-					</Card>
-				);
-			})}
-
-			<div className="text-right">
-				<Button type="submit" disabled={answered < total} size="sm">
-					Submit Quiz
-				</Button>
-			</div>
+			<NavigationButtons />
 		</form>
 	);
 };

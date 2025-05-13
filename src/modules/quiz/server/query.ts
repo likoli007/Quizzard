@@ -8,12 +8,16 @@ import {
 	multipleChoiceQuestions,
 	trueFalseQuestions
 } from '@/db/schema/questions';
-
-import { QuizForAttempt, QuizWithDetailsAndAnswers, type QuizWithDetails } from './types';
 import { quizKeyEntries } from '@/db/schema/quizKeys';
 
-export async function getTopicQuizzes(topicId: string) {
-	return db
+import {
+	type QuizForAttempt,
+	type QuizWithDetailsAndAnswers,
+	type QuizWithDetails
+} from './types';
+
+export const getTopicQuizzes = async (topicId: string) =>
+	db
 		.select({
 			id: quizzes.id,
 			title: quizzes.title,
@@ -25,9 +29,8 @@ export async function getTopicQuizzes(topicId: string) {
 		.from(quizzes)
 		.where(and(eq(quizzes.topicId, topicId), eq(quizzes.deleted, 0)))
 		.orderBy(desc(quizzes.createdAt));
-}
 
-export async function getAllQuizzes() {
+export const getAllQuizzes = async () => {
 	const allQuizzes = await db
 		.select()
 		.from(quizzes)
@@ -54,12 +57,12 @@ export async function getAllQuizzes() {
 	);
 
 	return result;
-}
+};
 
-export async function getQuizDetailsWithoutAttempts(
+export const getQuizDetailsWithoutAttempts = async (
 	quizId: string,
 	userId: string
-) {
+) => {
 	const quizRow = await db
 		.select({
 			id: quizzes.id,
@@ -110,7 +113,7 @@ export async function getQuizDetailsWithoutAttempts(
 		trueFalseQuestions: tfQuestions,
 		multipleChoiceQuestions: mcQuestions
 	};
-}
+};
 
 export const getQuizWithDetails = async (
 	quizId: string,
@@ -145,7 +148,9 @@ export const getQuizWithDetails = async (
 			completedAt: quizAttempts.completedAt
 		})
 		.from(quizAttempts)
-		.where(and(eq(quizzes.userId, userId), eq(quizAttempts.quizId, quizId)))
+		.where(
+			and(eq(quizAttempts.userId, userId), eq(quizAttempts.quizId, quizId))
+		)
 		.orderBy(desc(quizAttempts.startedAt));
 
 	const tfQuestions = await db
