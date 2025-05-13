@@ -12,9 +12,6 @@ export const favorites = sqliteTable('favorites', {
 	topicId: text('topic_id')
 		.notNull()
 		.references(() => topics.id),
-	deleted: integer('deleted')
-		.notNull()
-		.default(sql`0`),
 	createdAt: text('created_at')
 		.notNull()
 		.default(sql`CURRENT_TIMESTAMP`)

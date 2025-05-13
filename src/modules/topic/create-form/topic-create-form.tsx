@@ -59,22 +59,19 @@ export const CreateTopicForm = ({
 	});
 
 	const onSubmit = async (values: CreateTopicInput) => {
-		console.log('1');
 		setIsPending(true);
 		if (topic) {
-			console.log('2');
 			try {
 				await updateTopic(values);
 				toast.success('Topic updated!');
 				router.refresh();
+				router.push('/topics/' + topic.id);
 			} catch (_err: any) {
 				toast.error('Update failed');
-				console.error(_err);
 			} finally {
 				setIsPending(false);
 			}
 		} else {
-			console.log('3');
 			try {
 				await createTopic(values);
 				toast.success('Topic created!');

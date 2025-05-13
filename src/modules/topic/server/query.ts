@@ -4,6 +4,7 @@ import { and, desc, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { topics } from '@/db/schema/topics';
 import { favorites } from '@/db/schema/favorites';
+import { users } from '@/db/schema/users';
 
 export const getTopics = async () =>
 	db
@@ -37,7 +38,7 @@ export const getFavoriteTopics = async (userId: string) =>
 		})
 		.from(favorites)
 		.innerJoin(topics, eq(favorites.topicId, topics.id))
-		.where(and(eq(favorites.userId, userId), eq(favorites.deleted, 0)))
+		.where(and(eq(favorites.userId, userId), eq(topics.deleted, 0)))
 		.orderBy(desc(favorites.createdAt));
 
 export const getTopic = async (id: string) => {
@@ -51,11 +52,13 @@ export const getTopic = async (id: string) => {
 			publishedAt: topics.publishedAt,
 			readTime: topics.readTime,
 			userId: topics.userId,
+			authorName: users.name,
 			createdAt: topics.createdAt,
 			updatedAt: topics.updatedAt,
 			deleted: topics.deleted
 		})
 		.from(topics)
+		.leftJoin(users, eq(topics.userId, users.id))
 		.where(and(eq(topics.id, id), eq(topics.deleted, 0)));
 
 	return topic;
