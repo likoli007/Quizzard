@@ -1,5 +1,4 @@
 export type QuizWithDetails = {
-  [x: string]: any;
 	id: string;
 	title: string;
 	description: string | null;
@@ -37,4 +36,10 @@ export type QuizWithDetails = {
 		createdAt: string;
 		updatedAt: string;
 	}>;
+};
+
+export type AnswerKey = Record<string, boolean | number>;
+
+export type QuizWithDetailsAndAnswers = QuizWithDetails & {
+	answers: AnswerKey;
 };
