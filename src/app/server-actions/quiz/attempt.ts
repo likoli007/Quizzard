@@ -2,11 +2,13 @@
 
 import { v4 as uuid } from 'uuid';
 import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
 import { db } from '@/db';
 import { quizAttempts } from '@/db/schema/quizAttempts';
 import { quizAnswers } from '@/db/schema/quizAnswers';
 import { quizKeyEntries } from '@/db/schema/quizKeys';
+import { quizzes } from '@/db/schema/quizzes';
 
 type RawInput = {
 	quizId: string;
@@ -19,6 +21,11 @@ export const createQuizAttempt = async (
 	raw: RawInput
 ): Promise<{ attemptId: string }> => {
 	const { quizId, userId } = raw;
+
+	const topicId = await db
+		.select({ topicId: quizzes.topicId })
+		.from(quizzes)
+		.where(eq(quizzes.id, quizId));
 
 	const keyRows = await db
 		.select({
@@ -72,6 +79,9 @@ export const createQuizAttempt = async (
 			}))
 		);
 	});
+
+	revalidatePath(`/quiz/${quizId}/results`);
+	revalidatePath(`/topic/${topicId}/leaderboard`);
 
 	return { attemptId };
 };
