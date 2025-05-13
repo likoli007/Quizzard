@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { DeleteButton } from '@/components/common/delete-button';
 import { deleteQuiz } from '@/app/server-actions/quizzes';
 
-import { type TopicQuizPreview } from '../../types';
+import { type TopicQuizPreview } from '../../../types';
 
 type TopicDetailQuizCardProps = {
 	quiz: TopicQuizPreview;

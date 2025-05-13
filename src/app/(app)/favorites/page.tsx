@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import { TopicCard } from '@/modules/topic/card/topic-card';
+import { TopicCard } from '@/modules/topic/components/card/topic-card';
 import { getFavoriteTopics } from '@/modules/topic/server/query';
 import { auth } from '@/auth';
 

@@ -3,7 +3,7 @@
 import { FileText, HelpCircle } from 'lucide-react';
 import { useState } from 'react';
 
-import { CreateTopicForm } from '@/modules/topic/create-form/topic-create-form';
+import { CreateTopicForm } from '@/modules/topic/components/create-form/topic-create-form';
 import { TopicQuizForm } from '@/modules/quiz/components/create-quiz-form/create-quiz-form';
 import { type Topic } from '@/db/schema/topics';
 

@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { Providers } from '@/components/providers';
 import { navigationItems } from '@/modules/navigation/navigation-items';
 import { NavigationButton } from '@/modules/navigation/navigation-button';
-import { UserMenu } from '@/modules/home/user-menu';
+import { UserMenu } from '@/modules/home/components/user-menu';
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['400'] });
 

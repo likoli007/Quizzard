@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { getTopic } from '@/modules/topic/server/query';
-import TopicDetail from '@/modules/topic/detail/topic-detail';
+import TopicDetail from '@/modules/topic/components/detail/topic-detail';
 import { getTopicQuizzes } from '@/modules/quiz/server/query';
 
 const TopicDetailPage = async ({

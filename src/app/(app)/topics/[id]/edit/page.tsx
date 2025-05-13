@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '@/auth';
 import { getTopic, getTopicsByUserId } from '@/modules/topic/server/query';
-import { CreateTopicForm } from '@/modules/topic/create-form/topic-create-form';
+import { CreateTopicForm } from '@/modules/topic/components/create-form/topic-create-form';
 
 const EditTopicPage = async ({ params }: { params: { id: string } }) => {
 	const session = await auth();
