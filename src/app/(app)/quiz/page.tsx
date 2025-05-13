@@ -14,7 +14,7 @@ export default async function QuizIndexPage() {
 
 			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 				{all.map(q => (
-					<QuizCard quiz={q} />
+					<QuizCard quiz={q} key={q.id} />
 				))}
 			</div>
 		</div>

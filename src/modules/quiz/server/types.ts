@@ -80,3 +80,8 @@ export type QuizWithQuestionsCount = Quiz & {
 	tfCount: number;
 	mcCount: number;
 };
+
+export enum QuizQuestionType {
+	TF = 'TF',
+	MC = 'MC'
+}

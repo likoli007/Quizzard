@@ -14,11 +14,12 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { formatDate, formatDateWithTime } from '@/components/utils/date';
 import { type QuizAttempt } from '@/db/schema/quizAttempts';
-import { type Quiz } from '@/db/schema/quizzes';
 import { getTopic } from '@/modules/topic/server/query';
+import { QuizWithDetails } from '@/modules/quiz/server/types';
+import { auth } from '@/auth';
 
 type QuizHistoryCard = {
-	quiz: Quiz;
+	quiz: QuizWithDetails;
 	quizAttempt: QuizAttempt;
 	totalQuestions: number;
 };
@@ -28,8 +29,6 @@ export const QuizHistoryCard = async ({
 	quizAttempt,
 	totalQuestions
 }: QuizHistoryCard) => {
-	// replace with actual user id
-	const userId = 'temp';
 	const topic = await getTopic(quiz.topicId);
 	const percentage = Math.round((quizAttempt.score / totalQuestions) * 100);
 	const isPassing = percentage >= 60;
