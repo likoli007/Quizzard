@@ -16,8 +16,8 @@ import {
 	type QuizWithDetails
 } from './types';
 
-export async function getTopicQuizzes(topicId: string) {
-	return db
+export const getTopicQuizzes = async (topicId: string) =>
+	db
 		.select({
 			id: quizzes.id,
 			title: quizzes.title,
@@ -29,9 +29,8 @@ export async function getTopicQuizzes(topicId: string) {
 		.from(quizzes)
 		.where(and(eq(quizzes.topicId, topicId), eq(quizzes.deleted, 0)))
 		.orderBy(desc(quizzes.createdAt));
-}
 
-export async function getAllQuizzes() {
+export const getAllQuizzes = async () => {
 	const allQuizzes = await db
 		.select()
 		.from(quizzes)
@@ -58,12 +57,12 @@ export async function getAllQuizzes() {
 	);
 
 	return result;
-}
+};
 
-export async function getQuizDetailsWithoutAttempts(
+export const getQuizDetailsWithoutAttempts = async (
 	quizId: string,
 	userId: string
-) {
+) => {
 	const quizRow = await db
 		.select({
 			id: quizzes.id,
@@ -114,7 +113,7 @@ export async function getQuizDetailsWithoutAttempts(
 		trueFalseQuestions: tfQuestions,
 		multipleChoiceQuestions: mcQuestions
 	};
-}
+};
 
 export const getQuizWithDetails = async (
 	quizId: string,
