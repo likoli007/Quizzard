@@ -8,9 +8,13 @@ import {
 	multipleChoiceQuestions,
 	trueFalseQuestions
 } from '@/db/schema/questions';
-
-import { QuizForAttempt, QuizWithDetailsAndAnswers, type QuizWithDetails } from './types';
 import { quizKeyEntries } from '@/db/schema/quizKeys';
+
+import {
+	type QuizForAttempt,
+	type QuizWithDetailsAndAnswers,
+	type QuizWithDetails
+} from './types';
 
 export async function getTopicQuizzes(topicId: string) {
 	return db
@@ -145,7 +149,9 @@ export const getQuizWithDetails = async (
 			completedAt: quizAttempts.completedAt
 		})
 		.from(quizAttempts)
-		.where(and(eq(quizzes.userId, userId), eq(quizAttempts.quizId, quizId)))
+		.where(
+			and(eq(quizAttempts.userId, userId), eq(quizAttempts.quizId, quizId))
+		)
 		.orderBy(desc(quizAttempts.startedAt));
 
 	const tfQuestions = await db
