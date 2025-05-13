@@ -37,3 +37,9 @@ export type QuizWithDetails = {
 		updatedAt: string;
 	}>;
 };
+
+export type AnswerKey = Record<string, boolean | number>;
+
+export type QuizWithDetailsAndAnswers = QuizWithDetails & {
+	answers: AnswerKey;
+};
