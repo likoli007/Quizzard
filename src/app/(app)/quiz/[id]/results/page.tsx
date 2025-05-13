@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { quizAnswers } from '@/db/schema/quizAnswers';
-import { getQuizWithDetails } from '@/modules/quiz/server/query';
+import { getQuizWithDetails, getQuizWithDetailsAndAnswers } from '@/modules/quiz/server/query';
 import { PageHeading } from '@/components/common/page-heading';
 import {
   Card,
@@ -31,7 +31,7 @@ export default async function QuizResultsPage({ params }: ResultsPageProps) {
   }
   const userId = session.user.id;
 
-  const quiz: QuizWithDetails | undefined = await getQuizWithDetails(quizId);
+  const quiz: QuizWithDetails | undefined = await getQuizWithDetailsAndAnswers(quizId);
   if (!quiz) return notFound();
   if (quiz.attempts.length === 0) {
     return (

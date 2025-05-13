@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 
-import { getQuizWithDetails } from '@/modules/quiz/server/query';
+import { getQuizWithDetails, getQuizWithDetailsAndAnswers } from '@/modules/quiz/server/query';
 import QuizPageClient from '@/modules/quiz/components/QuizPageClient';
 import { PageHeading } from '@/components/common/page-heading';
 import { Card } from '@/components/ui/card';
@@ -13,7 +13,7 @@ type QuizPageProps = {
 
 export default async function QuizPage({ params }: QuizPageProps) {
 	const { id } = await params;
-	const quiz = await getQuizWithDetails(id);
+	const quiz = await getQuizWithDetailsAndAnswers(id);
 	if (!quiz) return notFound();
 
 	const session = await auth();
