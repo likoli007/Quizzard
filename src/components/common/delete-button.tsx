@@ -3,7 +3,6 @@
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Button } from '@/components/ui/button';
 import {
 	AlertDialog,
 	AlertDialogTrigger,
@@ -15,42 +14,49 @@ import {
 	AlertDialogCancel,
 	AlertDialogAction
 } from '@/components/ui/alert-dialog';
-import { deleteQuiz } from '@/app/server-actions/quizzes';
 
-type Props = {
-	quizId: string;
-};
+type DeleteButtonProps = React.PropsWithChildren<{
+	children: React.ReactNode;
+	title: string;
+	description: string;
+	cancel?: string;
+	confirm?: string;
+	deleteAction: () => void;
+}>;
 
-export const DeleteQuizButton = ({ quizId }: Props) => {
+export const DeleteButton = ({
+	children,
+	title,
+	description,
+	cancel,
+	confirm,
+	deleteAction
+}: DeleteButtonProps) => {
 	const router = useRouter();
 	const [isPending, start] = useTransition();
 
 	const handleDelete = () =>
 		start(async () => {
-			await deleteQuiz(quizId);
+			deleteAction();
 			router.refresh();
 		});
 
 	return (
 		<AlertDialog>
-			<AlertDialogTrigger asChild>
-				<Button variant="destructive" disabled={isPending}>
-					{isPending ? 'Deleting…' : 'Delete'}
-				</Button>
-			</AlertDialogTrigger>
+			<AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
 
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Delete quiz?</AlertDialogTitle>
-					<AlertDialogDescription>
-						This action permanently removes the quiz and cannot be undone.
-					</AlertDialogDescription>
+					<AlertDialogTitle>{title}</AlertDialogTitle>
+					<AlertDialogDescription>{description}</AlertDialogDescription>
 				</AlertDialogHeader>
 
 				<AlertDialogFooter>
-					<AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+					<AlertDialogCancel disabled={isPending}>
+						{cancel || 'Cancel'}
+					</AlertDialogCancel>
 					<AlertDialogAction onClick={handleDelete} disabled={isPending}>
-						Yes, delete
+						{confirm || 'Yes, delete'}
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>

@@ -43,6 +43,27 @@
       "when": 1746980936779,
       "tag": "0005_curious_captain_cross",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1747055027074,
+      "tag": "0006_redundant_reavers",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1747057108738,
+      "tag": "0007_puzzling_strong_guy",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1747120692525,
+      "tag": "0008_romantic_johnny_blaze",
+      "breakpoints": true
     }
   ]
 }

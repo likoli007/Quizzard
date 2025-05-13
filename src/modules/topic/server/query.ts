@@ -1,9 +1,10 @@
 import 'server-only';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 
 import { db } from '@/db';
 import { topics } from '@/db/schema/topics';
 import { favorites } from '@/db/schema/favorites';
+import { users } from '@/db/schema/users';
 
 export const getTopics = async () =>
 	db
@@ -17,6 +18,7 @@ export const getTopics = async () =>
 			readTime: topics.readTime
 		})
 		.from(topics)
+		.where(eq(topics.deleted, 0))
 		.orderBy(desc(topics.publishedAt));
 
 export const getFavoriteTopics = async (userId: string) =>
@@ -36,7 +38,7 @@ export const getFavoriteTopics = async (userId: string) =>
 		})
 		.from(favorites)
 		.innerJoin(topics, eq(favorites.topicId, topics.id))
-		.where(eq(favorites.userId, userId))
+		.where(and(eq(favorites.userId, userId), eq(topics.deleted, 0)))
 		.orderBy(desc(favorites.createdAt));
 
 export const getTopic = async (id: string) => {
@@ -50,11 +52,14 @@ export const getTopic = async (id: string) => {
 			publishedAt: topics.publishedAt,
 			readTime: topics.readTime,
 			userId: topics.userId,
+			authorName: users.name,
 			createdAt: topics.createdAt,
-			updatedAt: topics.updatedAt
+			updatedAt: topics.updatedAt,
+			deleted: topics.deleted
 		})
 		.from(topics)
-		.where(eq(topics.id, id));
+		.leftJoin(users, eq(topics.userId, users.id))
+		.where(and(eq(topics.id, id), eq(topics.deleted, 0)));
 
 	return topic;
 };
@@ -63,7 +68,7 @@ export const getTopicsByUserId = async (userId: string) => {
 	const topicsByUser = await db
 		.select()
 		.from(topics)
-		.where(eq(topics.userId, userId))
+		.where(and(eq(topics.userId, userId), eq(topics.deleted, 0)))
 		.orderBy(desc(topics.publishedAt));
 
 	return topicsByUser;

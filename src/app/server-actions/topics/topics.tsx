@@ -47,12 +47,26 @@ export async function updateTopic(raw: unknown) {
 }
 
 export async function deleteTopic(topicId: string) {
-	await db
-		.update(quizzes)
-		.set({ deleted: 1, updatedAt: new Date().toISOString() })
-		.where(eq(quizzes.topicId, topicId));
+	await db.transaction(async tx => {
+		await tx.delete(favorites).where(eq(favorites.topicId, topicId));
+		await tx
+			.update(favorites)
+			.set({ deleted: 1 })
+			.where(eq(favorites.topicId, topicId));
 
-	await db.delete(topics).where(eq(topics.id, topicId));
+		await tx
+			.update(quizzes)
+			.set({ deleted: 1, updatedAt: new Date().toISOString() })
+			.where(eq(quizzes.topicId, topicId));
+
+		await tx
+			.update(topics)
+			.set({ deleted: 1, updatedAt: new Date().toISOString() })
+			.where(eq(topics.id, topicId));
+	});
+
+	revalidatePath('/topics');
+	revalidatePath(`/topics/${topicId}`);
 }
 
 export const addFavorite = async (userId: string, topicId: string) => {
