@@ -5,7 +5,7 @@ import { Medal } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
 import { cn } from '@/lib/utils';
-import { LeaderboardCard } from '@/components/leaderboard/LeaderboardCard';
+import { LeaderboardCard } from './LeaderboardCard';
 
 type StickyLeaderboardProps = {
 	leaders: { id: string; name: string; score: number }[];
