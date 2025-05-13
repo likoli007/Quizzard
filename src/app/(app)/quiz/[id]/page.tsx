@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation';
 
 import { auth } from '@/auth';
-import { getQuizWithDetailsAndAnswers } from '@/modules/quiz/server/query';
+import { getQuizForAttempt, getQuizWithDetailsAndAnswers } from '@/modules/quiz/server/query';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { PageHeading } from '@/components/common/page-heading';
@@ -11,7 +11,7 @@ type QuizPageProps = { params: { id: string } };
 
 const QuizPage = async ({ params }: QuizPageProps) => {
 	const { id } = params;
-	const quiz = await getQuizWithDetailsAndAnswers(id);
+	const quiz = await getQuizForAttempt(id);
 	if (!quiz) return notFound();
 
 	const session = await auth();
