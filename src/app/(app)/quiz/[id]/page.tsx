@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation';
 
 import { auth } from '@/auth';
-import { getQuizForAttempt, getQuizWithDetailsAndAnswers } from '@/modules/quiz/server/query';
+import { getQuizForAttempt } from '@/modules/quiz/server/query';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { PageHeading } from '@/components/common/page-heading';

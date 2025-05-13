@@ -80,7 +80,13 @@ const QuizPageClient: React.FC<Props> = ({ quiz, userId }) => {
 	const handleSubmit = async () => {
 		const { attemptId } = await createQuizAttempt({
 			quizId: quiz.id,
-			userId
+			userId,
+			timeTaken: quiz.timeLimit - timeLeft,
+			answers: Object.entries(answers).map(([questionId, answer]) => ({
+				//TODO: ugly, turn answers into something else
+				questionId,
+				answer
+			}))
 		});
 
 		await Promise.all(
