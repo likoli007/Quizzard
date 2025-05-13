@@ -23,8 +23,6 @@ export const createTopicWithQuiz = async (
 	const data = createQuizSchema.parse(rawData);
 
 	return db.transaction(async tx => {
-		//TODO: check if this actually does a transaction
-
 		const quizId = uuid();
 		await tx.insert(quizzes).values({
 			id: quizId,
