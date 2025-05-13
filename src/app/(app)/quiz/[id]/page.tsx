@@ -1,26 +1,21 @@
 import { notFound, redirect } from 'next/navigation';
 
-import { getQuizWithDetails, getQuizWithDetailsAndAnswers } from '@/modules/quiz/server/query';
-import QuizPageClient from '@/modules/quiz/components/QuizPageClient';
-import { PageHeading } from '@/components/common/page-heading';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { auth } from '@/auth';
+import { getQuizWithDetailsAndAnswers } from '@/modules/quiz/server/query';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { PageHeading } from '@/components/common/page-heading';
+import QuizPageClient from '@/modules/quiz/components/QuizPageClient';
 
-type QuizPageProps = {
-	params: Promise<{ id: string }>;
-};
+type QuizPageProps = { params: { id: string } };
 
-export default async function QuizPage({ params }: QuizPageProps) {
-	const { id } = await params;
+const QuizPage = async ({ params }: QuizPageProps) => {
+	const { id } = params;
 	const quiz = await getQuizWithDetailsAndAnswers(id);
 	if (!quiz) return notFound();
 
 	const session = await auth();
-
-	if (!session?.user?.id) {
-		redirect('auth/login');
-	}
+	if (!session?.user?.id) redirect('/auth/login');
 
 	const userId = session.user.id;
 
@@ -44,4 +39,6 @@ export default async function QuizPage({ params }: QuizPageProps) {
 			</Card>
 		</div>
 	);
-}
+};
+
+export default QuizPage;
