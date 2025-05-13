@@ -89,12 +89,11 @@ const QuizResultsPage = async ({ params }: ResultsPageProps) => {
 					...tfQs.map(q => ({ type: 'TF' as const, q })),
 					...mcQs.map(q => ({ type: 'MC' as const, q }))
 				]
-					.sort((a, b) => a.q.order - b.q.order) // ascending order
+					.sort((a, b) => a.q.order - b.q.order)
 					.map((item, idx) => {
 						const q = item.q;
 						const ans = answerMap[q.id] ?? { selected: -1, isCorrect: false };
 
-						/* ───── TRUE / FALSE ───── */
 						if (item.type === 'TF') {
 							const correctIdx = quiz.answers?.[q.id] === true ? 1 : 0;
 
