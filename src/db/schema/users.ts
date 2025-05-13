@@ -10,6 +10,9 @@ import { type AdapterAccountType } from '@auth/core/adapters';
 
 import { userPrefs } from './userPrefs';
 import { favorites } from './favorites';
+import { topics } from './topics';
+import { quizzes } from './quizzes';
+import { quizAttempts } from './quizAttempts';
 
 export const users = sqliteTable('user', {
 	id: text('id')
@@ -92,10 +95,10 @@ export const authenticators = sqliteTable(
 
 export const usersRelations = relations(users, ({ one, many }) => ({
 	prefs: one(userPrefs, { fields: [users.id], references: [userPrefs.userId] }),
-	//topics: many(topics), 	TODO: uncomment once users table is functional
-	//quizzes: many(quizzes),	TODO: uncomment once users table is functional
-	favorites: many(favorites)
-	//attempts: many(quizAttempts)
+	topics: many(topics),
+	quizzes: many(quizzes),
+	favorites: many(favorites),
+	attempts: many(quizAttempts)
 }));
 
 export type User = typeof users.$inferSelect;
