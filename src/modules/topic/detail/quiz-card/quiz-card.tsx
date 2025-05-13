@@ -20,7 +20,7 @@ export const QuizCard = ({ quiz, isOwner }: QuizCardProps) => {
 
 	const handleDelete = () =>
 		start(async () => {
-			await deleteQuiz(quiz.id);
+			await deleteQuiz(quiz.id, quiz.topicId);
 			router.refresh();
 		});
 

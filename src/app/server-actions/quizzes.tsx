@@ -1,8 +1,8 @@
 'use server';
 
-//import { v4 as uuidv4 } from 'uuid';
 import { v4 as uuid } from 'uuid';
 import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
 import { db } from '@/db';
 import {
@@ -72,18 +72,20 @@ export const createTopicWithQuiz = async (
 	});
 };
 
-export const deleteQuiz = async (quizId: string): Promise<void> => {
+export const deleteQuiz = async (
+	quizId: string,
+	topicId: string
+): Promise<void> => {
 	await db.transaction(async tx => {
 		await tx.update(quizzes).set({ deleted: 1 }).where(eq(quizzes.id, quizId));
 	});
 
-	//revalidatePath(); TODO: later?
+	revalidatePath(`/topics/${topicId}`);
 };
 
 export const updateQuiz = async (
 	quizId: string,
-	data: CreateTopicQuizInput,
-	userId: string
+	data: CreateTopicQuizInput
 ): Promise<void> => {
 	await db.transaction(async tx => {
 		await tx
@@ -138,4 +140,6 @@ export const updateQuiz = async (
 			}
 		}
 	});
+
+	revalidatePath(`topics/${data.associatedTopicId}`);
 };
