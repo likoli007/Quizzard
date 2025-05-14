@@ -32,7 +32,7 @@ export const quizzes = sqliteTable('quizzes', {
 
 export const quizzesRelations = relations(quizzes, ({ one, many }) => ({
 	topic: one(topics, { fields: [quizzes.topicId], references: [topics.id] }),
-	//author: one(users, { fields: [quizzes.userId], references: [users.id] }),
+	author: one(users, { fields: [quizzes.userId], references: [users.id] }),
 	attempts: many(quizAttempts),
 	key: one(quizKeyEntries, {
 		fields: [quizzes.id],
