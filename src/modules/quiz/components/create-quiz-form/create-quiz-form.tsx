@@ -192,6 +192,17 @@ export const TopicQuizForm: React.FC<QuizFormProps> = ({
 				<section className="space-y-4">
 					<h2 className="text-xl font-semibold">Questions</h2>
 
+					<FormField
+						control={control}
+						name="questions"
+						render={() => (
+							<FormItem>
+								<FormMessage />{' '}
+								{/* will show “You must have at least one question” */}
+							</FormItem>
+						)}
+					/>
+
 					{fields.map((f, idx) => {
 						const name = `questions.${idx}` as const;
 						const type = watch(`${name}.type`);
@@ -225,7 +236,20 @@ export const TopicQuizForm: React.FC<QuizFormProps> = ({
 								{type === 'TF' ? (
 									<TrueFalseOption name={name} />
 								) : (
-									<MultipleChoiceOption name={name} />
+									<>
+										<FormField
+											control={control}
+											name={`${name}.options`}
+											render={() => (
+												<FormItem>
+													<FormLabel>
+														<FormMessage />
+													</FormLabel>
+												</FormItem>
+											)}
+										/>
+										<MultipleChoiceOption name={name} />
+									</>
 								)}
 							</div>
 						);

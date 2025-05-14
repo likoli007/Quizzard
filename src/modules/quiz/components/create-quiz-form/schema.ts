@@ -25,11 +25,16 @@ export const questionSchema = z.discriminatedUnion('type', [
 ]);
 
 const createQuizPartSchema = z.object({
-	associatedTopicId: z.string().uuid(),
-	quizTitle: z.string().min(1),
-	quizDescription: z.string().optional(),
-	timeLimit: z.coerce.number().int().positive(),
-	questions: z.array(questionSchema).min(1)
+	associatedTopicId: z.string().uuid().nonempty("Topic can't be empty"),
+	quizTitle: z
+		.string()
+		.min(1)
+		.max(100, 'Title must be between 1 and 100 characters'),
+	quizDescription: z.string().max(500).optional(),
+	timeLimit: z.coerce.number().int().positive().max(1800),
+	questions: z
+		.array(questionSchema)
+		.min(1, 'You must have at least one question')
 });
 
 export const createQuizSchema = createQuizPartSchema;
