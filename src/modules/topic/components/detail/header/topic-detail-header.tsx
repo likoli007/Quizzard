@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import type { Topic } from '@/db/schema/topics';
 import { DeleteButton } from '@/components/common/delete-button';
 import { useSession } from 'next-auth/react';
+import TopicDetailHeaderDate from './status/topic-detail-header-date';
 
 type TopicWithAuthor = Topic & {
 	authorName: string | null;
