@@ -11,6 +11,7 @@ import { deleteTopic } from '@/app/server-actions/topics/topics';
 import { useRouter } from 'next/navigation';
 import type { Topic } from '@/db/schema/topics';
 import { DeleteButton } from '@/components/common/delete-button';
+import { useSession } from 'next-auth/react';
 
 type TopicWithAuthor = Topic & {
 	authorName: string | null;
@@ -24,6 +25,7 @@ export default ({ topic }: TopicDetailHeaderProps) => {
 	const [isFavorite, setIsFavorite] = useState(false);
 	const toggleFavorite = () => setIsFavorite(f => !f);
 	const router = useRouter();
+	const { data: session } = useSession();
 
 	const handleDelete = async () => {
 		try {
@@ -47,22 +49,28 @@ export default ({ topic }: TopicDetailHeaderProps) => {
 							</Button>
 						</Link>
 
-						<Link href={`${topic.id}/edit`}>
-							<Button variant="outline" className="items-center gap-2">
-								<Edit2 className="h-4 w-4" />
-							</Button>
-						</Link>
+						{session?.user?.id === topic.userId && (
+							<>
+								<Link href={`${topic.id}/edit`}>
+									<Button variant="outline" className="items-center gap-2">
+										<Edit2 className="h-4 w-4" />
+									</Button>
+								</Link>
 
-						<DeleteButton
-							title="Delete topic"
-							description="Are you sure you want to delete this topic?"
-							deleteAction={handleDelete}
-						>
-							<Button variant="destructive" className="flex items-center gap-2">
-								<Trash2 className="h-4 w-4" />
-							</Button>
-						</DeleteButton>
-
+								<DeleteButton
+									title="Delete topic"
+									description="Are you sure you want to delete this topic?"
+									deleteAction={handleDelete}
+								>
+									<Button
+										variant="destructive"
+										className="flex items-center gap-2"
+									>
+										<Trash2 className="h-4 w-4" />
+									</Button>
+								</DeleteButton>
+							</>
+						)}
 						<Button
 							variant="outline"
 							onClick={toggleFavorite}

@@ -10,6 +10,8 @@ import { quizzes } from '@/db/schema/quizzes';
 import { favorites } from '@/db/schema/favorites';
 
 import { createTopicValidator, updateTopicValidator } from './validators';
+import { auth } from '@/auth';
+import { getTopic } from '@/modules/topic/server/query';
 
 const createTopic = async (raw: unknown) => {
 	const data = createTopicValidator.parse(raw);
@@ -33,6 +35,23 @@ export const updateTopic = async (raw: unknown) => {
 	const { id, title, description, content, category, readTime } =
 		updateTopicValidator.parse(raw);
 
+	const session = await auth();
+	const userId = session?.user?.id;
+
+	if (!userId) {
+		throw new Error('Unauthorized');
+	}
+
+	const topic = await getTopic(id);
+
+	if (!topic) {
+		throw new Error('Topic not found');
+	}
+
+	if (topic.userId !== userId) {
+		throw new Error('Forbidden: You are not allowed to update this topic');
+	}
+
 	await db
 		.update(topics)
 		.set({
@@ -50,6 +69,23 @@ export const updateTopic = async (raw: unknown) => {
 };
 
 export const deleteTopic = async (topicId: string) => {
+	const session = await auth();
+	const userId = session?.user?.id;
+
+	if (!userId) {
+		throw new Error('Unauthorized');
+	}
+
+	const topic = await getTopic(topicId);
+
+	if (!topic) {
+		throw new Error('Topic not found');
+	}
+
+	if (topic.userId !== userId) {
+		throw new Error('Forbidden: You are not allowed to delete this topic');
+	}
+
 	await db.transaction(async tx => {
 		await tx.delete(favorites).where(eq(favorites.topicId, topicId));
 
