@@ -198,7 +198,6 @@ export const TopicQuizForm: React.FC<QuizFormProps> = ({
 						render={() => (
 							<FormItem>
 								<FormMessage />{' '}
-								{/* will show “You must have at least one question” */}
 							</FormItem>
 						)}
 					/>
