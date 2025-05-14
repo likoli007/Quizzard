@@ -69,9 +69,11 @@ export const TopicCard = ({
 			<CardHeader>
 				<div className="flex items-start justify-between">
 					<div>
-						<CardTitle className='line-clamp-2'>{topic.title}</CardTitle>
+						<CardTitle className="line-clamp-2">{topic.title}</CardTitle>
 						{topic.description && (
-							<CardDescription className='line-clamp-3 text-ellipsis'>{topic.description}</CardDescription>
+							<CardDescription className="line-clamp-3 text-ellipsis">
+								{topic.description}
+							</CardDescription>
 						)}
 					</div>
 

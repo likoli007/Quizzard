@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 
 import { BackButton } from '@/components/common/back-button';
 
-import { TopicWithAuthor, type TopicQuizPreview } from '../../types';
+import type { TopicWithAuthor, TopicQuizPreview } from '../../types';
 
 import TopicDetailHeader from './header/topic-detail-header';
 import TopicDetailFooter from './footer/topic-detail-footer';

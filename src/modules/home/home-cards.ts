@@ -1,4 +1,5 @@
-import { Award, BookOpen, History, LucideIcon, Plus, Star } from 'lucide-react';
+import { Award, BookOpen, History, Plus, Star } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 export type HomeCardData = {
 	Icon: LucideIcon;

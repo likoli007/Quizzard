@@ -13,7 +13,7 @@ import {
 	type QuizWithDetailsAndAnswers
 } from '@/modules/quiz/server/types';
 import { auth } from '@/auth';
-import QuizResultCard from '@/modules/quiz/components/results/card/quiz-results-card';
+import { QuizResultCard } from '@/modules/quiz/components/results/card/quiz-results-card';
 
 type ResultsPageProps = { params: Promise<{ id: string }> };
 

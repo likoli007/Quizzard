@@ -10,10 +10,10 @@ import {
 } from '@/db/schema/questions';
 import { quizKeyEntries } from '@/db/schema/quizKeys';
 
-import {
-	type QuizForAttempt,
-	type QuizWithDetailsAndAnswers,
-	type QuizWithDetails,
+import type {
+	QuizForAttempt,
+	QuizWithDetailsAndAnswers,
+	QuizWithDetails,
 	QuizWithQuestionsCount
 } from './types';
 

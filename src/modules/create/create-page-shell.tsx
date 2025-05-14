@@ -17,7 +17,7 @@ export const CreatePageShell = ({
 	userId: string;
 	topics: Topic[];
 }) => {
-	const [activeTab, setActiveTab] = useState('topic');
+	const [_activeTab, setActiveTab] = useState('topic');
 
 	return (
 		<div className="container mx-auto px-4 py-12">

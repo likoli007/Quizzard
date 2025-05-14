@@ -66,7 +66,12 @@ export const CreateTopicForm = ({
 				toast.success('Topic updated!');
 				router.refresh();
 				router.push(`/topics/${topic.id}`);
-			} catch (_err: any) {
+			} catch (err: unknown) {
+				if (err instanceof Error) {
+					toast.error(err.message);
+				} else {
+					toast.error('Something went wrong');
+				}
 				toast.error('Update failed');
 			} finally {
 				setIsPending(false);
@@ -76,8 +81,12 @@ export const CreateTopicForm = ({
 				await createTopic(values);
 				toast.success('Topic created!');
 				router.push('/topics');
-			} catch (_err: any) {
-				toast.error('Failed to create topic');
+			} catch (err: unknown) {
+				if (err instanceof Error) {
+					toast.error(err.message);
+				} else {
+					toast.error('Something went wrong');
+				}
 			} finally {
 				setIsPending(false);
 			}

@@ -8,10 +8,10 @@ import { db } from '@/db';
 import { topics } from '@/db/schema/topics';
 import { quizzes } from '@/db/schema/quizzes';
 import { favorites } from '@/db/schema/favorites';
-
-import { createTopicValidator, updateTopicValidator } from './validators';
 import { auth } from '@/auth';
 import { getTopic } from '@/modules/topic/server/query';
+
+import { createTopicValidator, updateTopicValidator } from './validators';
 
 const createTopic = async (raw: unknown) => {
 	const data = createTopicValidator.parse(raw);

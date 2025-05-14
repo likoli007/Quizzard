@@ -1,15 +1,16 @@
 import { Calendar, Clock, Edit2, Medal, Star, Trash2 } from 'lucide-react';
-import { useState } from 'react';
 import Link from 'next/link';
-import { toast } from 'sonner';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { toast } from 'sonner';
 
 import { deleteTopic } from '@/app/server-actions/topics/topics';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import type { Topic } from '@/db/schema/topics';
 import { DeleteButton } from '@/components/common/delete-button';
-import { useSession } from 'next-auth/react';
+
 import TopicDetailHeaderDate from './status/topic-detail-header-date';
 
 type TopicWithAuthor = Topic & {
@@ -20,7 +21,7 @@ type TopicDetailHeaderProps = {
 	topic: TopicWithAuthor;
 };
 
-export default ({ topic }: TopicDetailHeaderProps) => {
+const TopicDetailHeader = ({ topic }: TopicDetailHeaderProps) => {
 	const [isFavorite, setIsFavorite] = useState(false);
 	const toggleFavorite = () => setIsFavorite(f => !f);
 	const router = useRouter();
@@ -31,7 +32,7 @@ export default ({ topic }: TopicDetailHeaderProps) => {
 			await deleteTopic(topic.id);
 			toast.success('Topic deleted');
 			router.push('/topics');
-		} catch (err: any) {
+		} catch (err) {
 			toast.error('Failed to delete');
 		}
 	};
@@ -52,6 +53,7 @@ export default ({ topic }: TopicDetailHeaderProps) => {
 							<Edit2 className="h-4 w-4" />
 						</Button>
 					</Link>
+
 					{session?.user?.id === topic.userId && (
 						<>
 							<Link href={`${topic.id}/edit`}>
@@ -74,6 +76,7 @@ export default ({ topic }: TopicDetailHeaderProps) => {
 							</DeleteButton>
 						</>
 					)}
+
 					<Button
 						variant="outline"
 						onClick={toggleFavorite}
@@ -111,3 +114,5 @@ export default ({ topic }: TopicDetailHeaderProps) => {
 		</div>
 	);
 };
+
+export default TopicDetailHeader;

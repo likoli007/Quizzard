@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { sql, relations } from 'drizzle-orm';
 
 import { topics } from './topics';
