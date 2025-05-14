@@ -93,7 +93,7 @@ export const TopicQuizForm: React.FC<QuizFormProps> = ({
 				await createTopicWithQuiz(data, userId);
 				toast.success('Topic & quiz created');
 			} else if (mode === 'edit' && initialData) {
-				await updateQuiz(initialData.id, data, userId);
+				await updateQuiz(initialData.id, data);
 				toast.success('Quiz updated');
 			}
 			router.push(`/topics/${data.associatedTopicId}`);
