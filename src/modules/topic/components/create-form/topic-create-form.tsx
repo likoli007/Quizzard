@@ -7,8 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 
 import {
-	Topic,
-	UpdateTopicInput,
+	type Topic,
+	type UpdateTopicInput,
 	type CreateTopicInput
 } from '@/db/schema/topics';
 import {
@@ -47,14 +47,14 @@ export const CreateTopicForm = ({
 	const form = useForm<FormValues>({
 		resolver: zodResolver(topic ? updateTopicValidator : createTopicValidator),
 		defaultValues: {
-			id: topic?.id || '',
-			title: topic?.title || '',
-			description: topic?.description || '',
+			id: topic?.id ?? '',
+			title: topic?.title ?? '',
+			description: topic?.description ?? '',
 			readTime: Number(topic?.readTime) || 5,
-			content: topic?.content || '',
-			category: topic?.category || '',
+			content: topic?.content ?? '',
+			category: topic?.category ?? '',
 			userId,
-			publishedAt: topic?.publishedAt || ''
+			publishedAt: topic?.publishedAt ?? ''
 		}
 	});
 
@@ -65,7 +65,7 @@ export const CreateTopicForm = ({
 				await updateTopic(values);
 				toast.success('Topic updated!');
 				router.refresh();
-				router.push('/topics/' + topic.id);
+				router.push(`/topics/${topic.id}`);
 			} catch (_err: any) {
 				toast.error('Update failed');
 			} finally {

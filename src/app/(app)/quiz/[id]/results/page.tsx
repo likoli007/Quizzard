@@ -9,7 +9,7 @@ import { PageHeading } from '@/components/common/page-heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-	QuizQuestionType,
+	type QuizQuestionType,
 	type QuizWithDetailsAndAnswers
 } from '@/modules/quiz/server/types';
 import { auth } from '@/auth';

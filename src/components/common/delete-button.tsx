@@ -53,10 +53,10 @@ export const DeleteButton = ({
 
 				<AlertDialogFooter>
 					<AlertDialogCancel disabled={isPending}>
-						{cancel || 'Cancel'}
+						{cancel ?? 'Cancel'}
 					</AlertDialogCancel>
 					<AlertDialogAction onClick={handleDelete} disabled={isPending}>
-						{confirm || 'Yes, delete'}
+						{confirm ?? 'Yes, delete'}
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>

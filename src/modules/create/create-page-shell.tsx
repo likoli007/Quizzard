@@ -6,9 +6,9 @@ import { useState } from 'react';
 import { CreateTopicForm } from '@/modules/topic/components/create-form/topic-create-form';
 import { TopicQuizForm } from '@/modules/quiz/components/create-quiz-form/create-quiz-form';
 import { type Topic } from '@/db/schema/topics';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import CreateTabsCard from './tabs/card/create-tabs-card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export const CreatePageShell = ({
 	userId,

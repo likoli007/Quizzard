@@ -17,13 +17,14 @@ const EditTopicPage = async ({
 	const topic = await getTopic((await params).id);
 
 	if (session?.user?.id !== topic.userId) {
-		<div>
-			<p>You are not authorized to edit this topic.</p>
-		</div>;
+		return (
+			<div>
+				<p>You are not authorized to edit this topic.</p>
+			</div>
+		);
 	} else {
+		return <CreateTopicForm userId={topic.userId!} topic={topic} />;
 	}
-
-	return <CreateTopicForm userId={topic.userId!} topic={topic} />;
 };
 
 export default EditTopicPage;
