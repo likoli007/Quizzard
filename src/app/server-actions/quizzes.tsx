@@ -15,6 +15,8 @@ import {
 	createQuizSchema,
 	type CreateTopicQuizInput
 } from '@/modules/quiz/components/create-quiz-form/schema';
+import { getQuizWithDetails } from '@/modules/quiz/server/query';
+import { auth } from '@/auth';
 
 export const createTopicWithQuiz = async (
 	rawData: unknown,
@@ -76,6 +78,22 @@ export const deleteQuiz = async (
 	quizId: string,
 	topicId: string
 ): Promise<void> => {
+	const session = await auth();
+	const userId = session?.user?.id;
+
+	if (!userId) {
+		throw new Error('Unauthorized');
+	}
+
+	const quiz = await getQuizWithDetails(quizId, userId);
+
+	if (!quiz) {
+		throw new Error('Quiz not found');
+	}
+
+	if (quiz.userId !== userId) {
+		throw new Error('Forbidden: You are not allowed to delete this quiz');
+	}
 	await db.transaction(async tx => {
 		await tx.update(quizzes).set({ deleted: 1 }).where(eq(quizzes.id, quizId));
 	});
@@ -87,6 +105,22 @@ export const updateQuiz = async (
 	quizId: string,
 	data: CreateTopicQuizInput
 ): Promise<void> => {
+	const session = await auth();
+	const userId = session?.user?.id;
+
+	if (!userId) {
+		throw new Error('Unauthorized');
+	}
+
+	const quiz = await getQuizWithDetails(quizId, userId);
+
+	if (!quiz) {
+		throw new Error('Quiz not found');
+	}
+
+	if (quiz.userId !== userId) {
+		throw new Error('Forbidden: You are not allowed to update this quiz');
+	}
 	await db.transaction(async tx => {
 		await tx
 			.update(quizzes)
