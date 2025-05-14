@@ -9,5 +9,5 @@ export const navigationItems: { href: string; label: string }[] = [
 	{ href: '/favorites', label: 'Favorites' },
 	{ href: '/quiz/history', label: 'History' },
 	{ href: '/leaderboard', label: 'Leaderboard' },
-	{ href: '/quiz',      label: 'Quizzes'   },
+	{ href: '/quiz', label: 'Quizzes' }
 ];

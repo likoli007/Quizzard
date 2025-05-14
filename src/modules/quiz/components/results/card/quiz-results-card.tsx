@@ -1,3 +1,6 @@
+import { CheckCircle, XCircle, MinusCircle } from 'lucide-react';
+import Link from 'next/link';
+
 import {
 	Card,
 	CardHeader,
@@ -6,14 +9,12 @@ import {
 	CardFooter
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, MinusCircle } from 'lucide-react';
 import { QuizQuestionType } from '@/modules/quiz/server/types';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export type UserAnswerRecord = { selected: number | null; isCorrect: boolean };
 
-export interface QuizResultCardProps {
+export type QuizResultCardProps = {
 	index: number;
 	type: QuizQuestionType;
 	quizId: string;
@@ -22,7 +23,7 @@ export interface QuizResultCardProps {
 	userAnswer: UserAnswerRecord;
 	correctValue: boolean | number;
 	options?: string[];
-}
+};
 
 export const QuizResultCard = ({
 	index,

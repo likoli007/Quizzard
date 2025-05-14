@@ -9,13 +9,13 @@ import { PageHeading } from '@/components/common/page-heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-	QuizQuestionType,
+	type QuizQuestionType,
 	type QuizWithDetailsAndAnswers
 } from '@/modules/quiz/server/types';
 import { auth } from '@/auth';
 import QuizResultCard from '@/modules/quiz/components/results/card/quiz-results-card';
 
-type ResultsPageProps = { params: { id: string } };
+type ResultsPageProps = { params: Promise<{ id: string }> };
 
 const QuizResultsPage = async ({ params }: ResultsPageProps) => {
 	const quizId = (await params).id;

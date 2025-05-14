@@ -2,7 +2,7 @@ import { getAllQuizzes } from '@/modules/quiz/server/query';
 import { PageHeading } from '@/components/common/page-heading';
 import { QuizCard } from '@/modules/quiz/components/card/quiz-card';
 
-export default async function QuizIndexPage() {
+const QuizIndexPage = async () => {
 	const all = await getAllQuizzes();
 
 	return (
@@ -19,4 +19,6 @@ export default async function QuizIndexPage() {
 			</div>
 		</div>
 	);
-}
+};
+
+export default QuizIndexPage;

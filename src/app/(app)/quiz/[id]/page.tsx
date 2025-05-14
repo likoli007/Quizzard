@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { PageHeading } from '@/components/common/page-heading';
 import QuizPageClient from '@/modules/quiz/components/QuizPageClient';
 
-type QuizPageProps = { params: { id: string } };
+type QuizPageProps = { params: Promise<{ id: string }> };
 
 const QuizPage = async ({ params }: QuizPageProps) => {
 	const { id } = await params;
