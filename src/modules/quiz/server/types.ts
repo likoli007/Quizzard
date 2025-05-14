@@ -1,4 +1,4 @@
-import { Quiz } from '@/db/schema/quizzes';
+import type { Quiz } from '@/db/schema/quizzes';
 
 export type QuizForAttempt = {
 	id: string;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -66,31 +66,13 @@ const QuizPageClient: React.FC<Props> = ({ quiz, userId }) => {
 	const [timeLeft, setTimeLeft] = useState<number>(quiz.timeLimit);
 	const [index, setIndex] = useState(0);
 
-	useEffect(() => {
-		if (timeLeft <= 0) {
-			handleSubmit();
-			return;
-		}
-		const timer = setTimeout(() => setTimeLeft(t => t - 1), 1000);
-		return () => clearTimeout(timer);
-	}, [timeLeft]);
-
-	const handleAnswer = (questionId: string, value: boolean | number) =>
-		setAnswers(a => ({ ...a, [questionId]: value }));
-
-	const handleSubmit = async () => {
-		//TODO: ugly, turn answers into something else
+	const handleSubmit = useCallback(async () => {
 		const allAnswers = questions.map(q => {
 			const existing = answers[q.id];
-
-			if (existing !== undefined) {
-				return { questionId: q.id, answer: existing };
-			}
-
-			return { questionId: q.id, answer: null };
+			return { questionId: q.id, answer: existing ?? null };
 		});
 
-		const { attemptId } = await createQuizAttempt({
+		await createQuizAttempt({
 			quizId: quiz.id,
 			userId,
 			timeTaken: quiz.timeLimit - timeLeft,
@@ -98,7 +80,19 @@ const QuizPageClient: React.FC<Props> = ({ quiz, userId }) => {
 		});
 
 		router.push(`/quiz/${quiz.id}/results`);
-	};
+	}, [answers, questions, quiz.id, quiz.timeLimit, router, userId, timeLeft]);
+
+	useEffect(() => {
+		if (timeLeft <= 0) {
+			handleSubmit();
+			return;
+		}
+		const timer = setTimeout(() => setTimeLeft(t => t - 1), 1000);
+		return () => clearTimeout(timer);
+	}, [timeLeft, handleSubmit]);
+
+	const handleAnswer = (questionId: string, value: boolean | number) =>
+		setAnswers(a => ({ ...a, [questionId]: value }));
 
 	const total = questions.length;
 	const answered = Object.keys(answers).length;

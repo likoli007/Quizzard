@@ -24,7 +24,7 @@ export const debounceLeading = <F extends (...args: any[]) => void>(
 			fn(...args);
 		}
 
-		clearTimeout(timer as any);
+		clearTimeout(timer as ReturnType<typeof setTimeout>);
 
 		timer = setTimeout(() => {
 			timer = null;

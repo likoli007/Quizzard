@@ -22,7 +22,7 @@ export const TopicDetailQuizCard = ({
 	isOwner,
 	topicId
 }: TopicDetailQuizCardProps) => {
-	const [isPending, start] = useTransition();
+	const [_isPending, start] = useTransition();
 	const router = useRouter();
 
 	const handleDelete = () =>

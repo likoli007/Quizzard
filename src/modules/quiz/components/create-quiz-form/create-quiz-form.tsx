@@ -3,12 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-	useForm,
-	useFieldArray,
-	useFormContext,
-	type SubmitHandler
-} from 'react-hook-form';
+import { useForm, useFieldArray, type SubmitHandler } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import {
@@ -71,7 +66,7 @@ export const TopicQuizForm: React.FC<QuizFormProps> = ({
 					}
 	});
 
-	const { control, handleSubmit, formState, watch } = form;
+	const { control, handleSubmit, watch } = form;
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'questions'
@@ -97,8 +92,12 @@ export const TopicQuizForm: React.FC<QuizFormProps> = ({
 				toast.success('Quiz updated');
 			}
 			router.push(`/topics/${data.associatedTopicId}`);
-		} catch (err: any) {
-			toast.error(err.message ?? 'Something went wrong');
+		} catch (err: unknown) {
+			if (err instanceof Error) {
+				toast.error(err.message);
+			} else {
+				toast.error('Something went wrong');
+			}
 		} finally {
 			setIsPending(false);
 		}

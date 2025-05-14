@@ -10,9 +10,8 @@ const TopicDetailPage = async ({
 	params: Promise<{ id: string }>;
 }) => {
 	const topic = await getTopic((await params).id);
-	const quizzes = await getTopicQuizzes(topic.id);
-
 	if (!topic) return notFound();
+	const quizzes = await getTopicQuizzes(topic.id);
 
 	return <TopicDetail topic={topic} quizzes={quizzes} />;
 };

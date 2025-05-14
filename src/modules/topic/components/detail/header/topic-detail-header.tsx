@@ -1,12 +1,13 @@
 import { Calendar, Clock, Edit2, Medal, Star, Trash2 } from 'lucide-react';
-import { useState } from 'react';
 import Link from 'next/link';
-import { toast } from 'sonner';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { toast } from 'sonner';
 
 import { deleteTopic } from '@/app/server-actions/topics/topics';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import type { Topic } from '@/db/schema/topics';
 import { DeleteButton } from '@/components/common/delete-button';
 
@@ -20,17 +21,18 @@ type TopicDetailHeaderProps = {
 	topic: TopicWithAuthor;
 };
 
-export default ({ topic }: TopicDetailHeaderProps) => {
+const TopicDetailHeader = ({ topic }: TopicDetailHeaderProps) => {
 	const [isFavorite, setIsFavorite] = useState(false);
 	const toggleFavorite = () => setIsFavorite(f => !f);
 	const router = useRouter();
+	const { data: session } = useSession();
 
 	const handleDelete = async () => {
 		try {
 			await deleteTopic(topic.id);
 			toast.success('Topic deleted');
 			router.push('/topics');
-		} catch (err: any) {
+		} catch (err) {
 			toast.error('Failed to delete');
 		}
 	};
@@ -52,15 +54,28 @@ export default ({ topic }: TopicDetailHeaderProps) => {
 						</Button>
 					</Link>
 
-					<DeleteButton
-						title="Delete topic"
-						description="Are you sure you want to delete this topic?"
-						deleteAction={handleDelete}
-					>
-						<Button variant="destructive" className="flex items-center gap-2">
-							<Trash2 className="h-4 w-4" />
-						</Button>
-					</DeleteButton>
+					{session?.user?.id === topic.userId && (
+						<>
+							<Link href={`${topic.id}/edit`}>
+								<Button variant="outline" className="items-center gap-2">
+									<Edit2 className="h-4 w-4" />
+								</Button>
+							</Link>
+
+							<DeleteButton
+								title="Delete topic"
+								description="Are you sure you want to delete this topic?"
+								deleteAction={handleDelete}
+							>
+								<Button
+									variant="destructive"
+									className="flex items-center gap-2"
+								>
+									<Trash2 className="h-4 w-4" />
+								</Button>
+							</DeleteButton>
+						</>
+					)}
 
 					<Button
 						variant="outline"
@@ -99,3 +114,5 @@ export default ({ topic }: TopicDetailHeaderProps) => {
 		</div>
 	);
 };
+
+export default TopicDetailHeader;

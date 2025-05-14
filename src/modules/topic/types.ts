@@ -1,4 +1,4 @@
-import { Topic } from '@/db/schema/topics';
+import type { Topic } from '@/db/schema/topics';
 
 export type TopicQuizPreview = {
 	id: string;

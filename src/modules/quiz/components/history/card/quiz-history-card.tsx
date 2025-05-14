@@ -15,8 +15,7 @@ import { Progress } from '@/components/ui/progress';
 import { formatDate, formatDateWithTime } from '@/components/utils/date';
 import { type QuizAttempt } from '@/db/schema/quizAttempts';
 import { getTopic } from '@/modules/topic/server/query';
-import { QuizWithDetails } from '@/modules/quiz/server/types';
-import { auth } from '@/auth';
+import type { QuizWithDetails } from '@/modules/quiz/server/types';
 
 type QuizHistoryCard = {
 	quiz: QuizWithDetails;
