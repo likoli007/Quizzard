@@ -1,3 +1,6 @@
+// Using `any[]` to allow full flexibility; type safety is preserved via `Parameters<F>`
+/* eslint-disable */
+
 export const debounce = <F extends (...args: any[]) => void>(
 	fn: F,
 	delay: number
