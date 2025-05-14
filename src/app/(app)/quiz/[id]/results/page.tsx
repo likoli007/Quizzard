@@ -75,7 +75,20 @@ const QuizResultsPage = async ({ params }: ResultsPageProps) => {
 		...mcQs.map(q => ({
 			type: 'MC' as QuizQuestionType,
 			q,
-			options: Array.isArray(q.options) ? q.options : JSON.parse(q.options)
+			options: Array.isArray(q.options)
+				? q.options
+				: typeof q.options === 'string'
+					? (() => {
+							try {
+								return JSON.parse(q.options);
+							} catch {
+								return (q.options as string)
+									.split(',')
+									.map(s => s.trim())
+									.filter(Boolean);
+							}
+						})()
+					: []
 		}))
 	].sort((a, b) => a.q.order - b.q.order);
 
