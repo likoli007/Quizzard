@@ -48,12 +48,6 @@ const TopicDetailHeader = ({ topic }: TopicDetailHeaderProps) => {
 						</Button>
 					</Link>
 
-					<Link href={`${topic.id}/edit`}>
-						<Button variant="outline" className="items-center gap-2">
-							<Edit2 className="h-4 w-4" />
-						</Button>
-					</Link>
-
 					{session?.user?.id === topic.userId && (
 						<>
 							<Link href={`${topic.id}/edit`}>
