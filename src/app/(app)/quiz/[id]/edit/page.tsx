@@ -5,7 +5,13 @@ import { getQuizDetailsWithoutAttempts } from '@/modules/quiz/server/query';
 import { getTopicsByUserId } from '@/modules/topic/server/query';
 import { TopicQuizForm } from '@/modules/quiz/components/create-quiz-form/create-quiz-form';
 
-const EditQuizPage = async ({ params }: { params: { id: string } }) => {
+const EditQuizPage = async ({
+	params,
+	searchParams
+}: {
+	params: { id: string };
+	searchParams?: Record<string, string | string[]>;
+}) => {
 	const session = await auth();
 	if (!session?.user?.id) {
 		redirect('/auth/login');
