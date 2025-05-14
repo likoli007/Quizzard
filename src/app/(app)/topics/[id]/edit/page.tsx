@@ -4,7 +4,11 @@ import { auth } from '@/auth';
 import { getTopic, getTopicsByUserId } from '@/modules/topic/server/query';
 import { CreateTopicForm } from '@/modules/topic/components/create-form/topic-create-form';
 
-const EditTopicPage = async ({ params }: { params: { id: string } }) => {
+const EditTopicPage = async ({
+	params
+}: {
+	params: Promise<{ id: string }>;
+}) => {
 	const session = await auth();
 	if (!session?.user?.id) {
 		redirect('/auth/login');
